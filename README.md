@@ -1,16 +1,11 @@
 # chat_app
 
-A new Flutter project.
+A new Flutter chat app.
+2024级华中科技大学计算机学院软件工程项目
 
-## Getting Started
+## 小组成员
+- 叶俊江
+- 王国豪
+- 方梓鑫
+- 唐乔
 
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
