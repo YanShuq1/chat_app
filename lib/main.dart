@@ -12,8 +12,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return const CupertinoApp(
       debugShowCheckedModeBanner: false,
-      title: 'Chat Demo',
-      home: MyHomePage(title: 'Chat Demo'),
+      title: 'ChatApp Demo',
+      home: MyHomePage(),
     );
   }
 }

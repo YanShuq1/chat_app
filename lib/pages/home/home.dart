@@ -1,9 +1,11 @@
+import 'package:chat_app/pages/card/card.dart';
+import 'package:chat_app/pages/chat/chat.dart';
+import 'package:chat_app/pages/contacts/contacts.dart';
+import 'package:chat_app/pages/moments/moments.dart';
 import 'package:flutter/cupertino.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title});
-
-  final String title;
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -12,53 +14,57 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        trailing: GestureDetector(
-          onTap: () {
-            showCupertinoModalPopup(
-              context: context,
-              builder: (BuildContext context) => CupertinoActionSheet(
-                title: const Text('选择操作'),
-                actions: <CupertinoActionSheetAction>[
-                  CupertinoActionSheetAction(
-                    child: const Text('添加好友'),
-                    onPressed: () {
-                      //print("Selected: Item 1");
-                      Navigator.pop(context);
-                    },
-                  ),
-                  CupertinoActionSheetAction(
-                    child: const Text('创建群聊'),
-                    onPressed: () {
-                      //print("Selected: Item 2");
-                      Navigator.pop(context);
-                    },
-                  ),
-                  CupertinoActionSheetAction(
-                    child: const Text('加入群聊'),
-                    onPressed: () {
-                      //print("Selected: Item 3");
-                      Navigator.pop(context);
-                    },
-                  ),
-                ],
-                cancelButton: CupertinoActionSheetAction(
-                  child: const Text('取消'),
-                  onPressed: () {
-                    Navigator.pop(context);
-                  },
+    return CupertinoTabScaffold(
+        tabBar: CupertinoTabBar(
+          items: const <BottomNavigationBarItem>[
+            BottomNavigationBarItem(
+              icon: Icon(CupertinoIcons.paperplane),
+              label: '动态',
+            ),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  CupertinoIcons.bubble_left_bubble_right,
                 ),
-              ),
-            );
-          },
-          child: const Icon(CupertinoIcons.add_circled),
+                label: '消息'),
+            BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.person_3), label: '联系人'),
+            BottomNavigationBarItem(
+                icon: Icon(CupertinoIcons.person), label: '我'),
+          ],
         ),
-        middle: const Text("HomePage"),
-      ),
-      child: const Center(
-        child: Text("Content here"),
-      ),
-    );
+        tabBuilder: (context, index) {
+          late final CupertinoTabView returnView;
+          switch (index) {
+            case 0:
+              returnView = CupertinoTabView(
+                builder: (context) {
+                  return const MyMomemntsPage();
+                },
+              );
+              break;
+            case 1:
+              returnView = CupertinoTabView(
+                builder: (context) {
+                  return const MyChatPage();
+                },
+              );
+              break;
+            case 2:
+              returnView = CupertinoTabView(
+                builder: (context) {
+                  return const MyContactsPage();
+                },
+              );
+              break;
+            case 3:
+              returnView = CupertinoTabView(
+                builder: (context) {
+                  return const MyCardPage();
+                },
+              );
+              break;
+          }
+          return returnView;
+        });
   }
 }
