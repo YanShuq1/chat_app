@@ -19,17 +19,25 @@ class _MyHomePageState extends State<MyHomePage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(CupertinoIcons.paperplane),
+              activeIcon: Icon(CupertinoIcons.paperplane_fill),
               label: '动态',
             ),
             BottomNavigationBarItem(
                 icon: Icon(
                   CupertinoIcons.bubble_left_bubble_right,
                 ),
+                activeIcon: Icon(
+                  CupertinoIcons.bubble_left_bubble_right_fill,
+                ),
                 label: '消息'),
             BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.person_3), label: '联系人'),
+                icon: Icon(CupertinoIcons.person_3),
+                activeIcon: Icon(CupertinoIcons.person_3_fill),
+                label: '联系人'),
             BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.person), label: '我'),
+                icon: Icon(CupertinoIcons.person),
+                activeIcon: Icon(CupertinoIcons.person_fill),
+                label: '我'),
           ],
         ),
         tabBuilder: (context, index) {
