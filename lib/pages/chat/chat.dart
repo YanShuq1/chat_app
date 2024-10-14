@@ -1,6 +1,6 @@
+import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
 
 class MyChatPage extends StatefulWidget {
   const MyChatPage({super.key});
@@ -48,9 +48,16 @@ class _MyChatPageState extends State<MyChatPage> {
                 ),
                 trailing: Text("8:${index.toString().padLeft(2, '0')}",
                     style: const TextStyle(
-                      color: Colors.grey,
+                      color: CupertinoColors.systemGrey2,
                       fontSize: 10.0,
                     )),
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      CupertinoPageRoute(
+                          builder: (context) =>
+                              PrivateChat(contactName: "好友$index")));
+                },
               );
             },
           ),
