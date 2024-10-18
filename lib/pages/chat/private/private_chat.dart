@@ -2,9 +2,11 @@ import 'package:chat_app/widgets/contact_card_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
 
 class PrivateChat extends StatefulWidget {
-  const PrivateChat({super.key, required this.contactName});
+  const PrivateChat(
+      {super.key, required this.contactName, required this.chatID});
 
   final String contactName;
+  final String chatID;
 
   @override
   State<PrivateChat> createState() => _PrivateChatState();
@@ -22,10 +24,15 @@ class _PrivateChatState extends State<PrivateChat> {
           },
         ),
         middle: Text(widget.contactName),
-        trailing: ContactCardGestureDetector(contactName: widget.contactName,),
+        trailing: ContactCardGestureDetector(
+            contactName: widget.contactName, chatID: widget.chatID),
       ),
       //TODO:消息列表
       child: Center(),
     );
   }
+}
+
+extension on BuildContext {
+  get chatID => null;
 }

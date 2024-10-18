@@ -1,8 +1,10 @@
+import 'package:chat_app/pages/chat/contact_manage/add_contact.dart';
 import 'package:flutter/cupertino.dart';
 
 class ContactsManageGestureDetector extends StatelessWidget {
+  final VoidCallback onAdded;
   //联系人管理监听手势按钮组件，负责添加/删除好友，创建群聊业务
-  const ContactsManageGestureDetector({super.key});
+  const ContactsManageGestureDetector({super.key, required this.onAdded});
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +18,14 @@ class ContactsManageGestureDetector extends StatelessWidget {
               CupertinoActionSheetAction(
                 child: const Text('添加好友'),
                 onPressed: () {
-                  //print("Selected: Item 1");
                   Navigator.pop(context);
+                  Navigator.push(
+                      context,
+                      CupertinoDialogRoute(
+                          builder: (context) => AddContactPage(
+                                onAdded: onAdded,
+                              ),
+                          context: context));
                 },
               ),
               CupertinoActionSheetAction(

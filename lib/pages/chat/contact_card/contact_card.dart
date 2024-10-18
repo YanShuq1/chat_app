@@ -1,11 +1,13 @@
+import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/widgets/contact_to_top_switch.dart';
 import 'package:flutter/cupertino.dart';
 
 class ContactCard extends StatelessWidget {
-  const ContactCard({super.key, required this.contactName});
+  const ContactCard({super.key, required this.chatID, required this.nickName});
 
-  final String contactName;
+  final String chatID;
+  final String nickName;
 
   @override
   Widget build(BuildContext context) {
@@ -47,23 +49,23 @@ class ContactCard extends StatelessWidget {
                     height: 90,
                   ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(20.0, 15.0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0, 0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          contactName,
+                          nickName,
                           style: const TextStyle(
-                            fontSize: 20.0,
+                            fontSize: 23.0,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
                         //TODO:获取用户昵称和ID
-                        const Text(
-                          "昵称: ID",
-                          style: TextStyle(
+                        Text(
+                          "用户名: ${contactList.firstWhere((contact) => contact.chatID == chatID).contactName}",
+                          style: const TextStyle(
                             color: CupertinoColors.systemGrey2,
                             fontSize: 15.0,
                             fontWeight: FontWeight.w400,
@@ -103,7 +105,7 @@ class ContactCard extends StatelessWidget {
                     ),
                   ),
                   trailing: SizedBox(
-                    width: 100,
+                    width: 200,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       mainAxisSize: MainAxisSize.min,
@@ -111,7 +113,7 @@ class ContactCard extends StatelessWidget {
                       textDirection: TextDirection.ltr,
                       children: <Widget>[
                         Text(
-                          contactName,
+                          nickName,
                           style: const TextStyle(
                             fontSize: 17.0,
                             fontWeight: FontWeight.w600,
@@ -173,7 +175,7 @@ class ContactCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  trailing: ContactToTopSwitch(contactName: contactName),
+                  trailing: ContactToTopSwitch(chatID: chatID,),
                 ),
               ),
             ),
@@ -237,8 +239,10 @@ class ContactCard extends StatelessWidget {
                     Navigator.push(
                         context,
                         CupertinoPageRoute(
-                            builder: (context) =>
-                                PrivateChat(contactName: contactName)));
+                            builder: (context) => PrivateChat(
+                                  contactName: nickName,
+                                  chatID: chatID,
+                                )));
                   },
                 ),
               ),

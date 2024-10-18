@@ -3,9 +3,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 //置顶聊天switch开关
 class ContactToTopSwitch extends StatefulWidget {
-  const ContactToTopSwitch({super.key, required this.contactName});
+  const ContactToTopSwitch({super.key, required this.chatID});
 
-  final String contactName;
+  final String chatID;
 
   @override
   State<ContactToTopSwitch> createState() => _ContactToTopSwitchState();
@@ -24,14 +24,14 @@ class _ContactToTopSwitchState extends State<ContactToTopSwitch> {
   Future<void> _loadSwitchValue() async {
     final pref = await SharedPreferences.getInstance();
     setState(() {
-      _value = pref.getBool(widget.contactName) ?? false; //若找不到状态，默认为false
+      _value = pref.getBool(widget.chatID) ?? false; //若找不到状态，默认为false
     });
   }
 
   //保存switch状态到本地
   Future<void> _saveSwitchValue(bool value) async {
     final pref = await SharedPreferences.getInstance();
-    pref.setBool(widget.contactName, value);
+    pref.setBool(widget.chatID, value);
   }
 
   @override

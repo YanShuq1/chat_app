@@ -3,8 +3,9 @@ import 'package:flutter/cupertino.dart';
 
 //进入联系人card监听手势组件
 class ContactCardGestureDetector extends StatelessWidget {
-  const ContactCardGestureDetector({super.key, required this.contactName});
+  const ContactCardGestureDetector({super.key, required this.contactName, required this.chatID});
 
+  final String chatID;
   final String contactName;
 
   @override
@@ -14,7 +15,10 @@ class ContactCardGestureDetector extends StatelessWidget {
         Navigator.push(
             context,
             CupertinoPageRoute(
-                builder: (context) => ContactCard(contactName: contactName)));
+                builder: (context) => ContactCard(
+                      nickName: contactName,
+                      chatID: chatID,
+                    )));
       },
       child: const Icon(CupertinoIcons.ellipsis),
     );

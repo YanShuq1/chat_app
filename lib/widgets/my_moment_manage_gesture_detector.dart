@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 class MyMomentManageGestureDetector extends StatelessWidget {
-  //联系人管理监听手势按钮组件，负责添加/删除好友，创建群聊业务
+  //动态管理监听手势按钮组件，负责发布动态业务
   const MyMomentManageGestureDetector({super.key});
 
   @override

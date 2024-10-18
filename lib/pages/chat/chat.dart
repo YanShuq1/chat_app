@@ -1,3 +1,4 @@
+import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
@@ -13,14 +14,25 @@ class _MyChatPageState extends State<MyChatPage> {
   //滚动监听器 _controller
   final ScrollController _controller = ScrollController();
 
-  int itemNum = 60;
+  //状态初始化
+  @override
+  void initState() {
+    super.initState();
+    loadChatList();
+  }
+
+  void _onChatAdded(){
+    setState(() {
+      loadChatList();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-        navigationBar: const CupertinoNavigationBar(
-          trailing: ContactsManageGestureDetector(),
-          middle: Text("Chat"),
+        navigationBar: CupertinoNavigationBar(
+          trailing: ContactsManageGestureDetector(onAdded:_onChatAdded,),
+          middle: const Text("Chat"),
         ),
         child: CupertinoScrollbar(
           //滑动条厚度
@@ -34,12 +46,12 @@ class _MyChatPageState extends State<MyChatPage> {
           child: ListView.builder(
             controller: _controller,
             //TODO:获取消息列表数
-            itemCount: itemNum,
+            itemCount: chatList.length,
             itemBuilder: (BuildContext context, int index) {
               return CupertinoListTile(
                 //TODO：好友头像、ID、最近消息、最近消息发送时间获取，点击事件处理
                 leading: const Icon(CupertinoIcons.person),
-                title: Text("好友$index"),
+                title: Text(chatList[index].contactName),
                 subtitle: const Text(
                   "最近消息...",
                   style: TextStyle(
@@ -55,8 +67,10 @@ class _MyChatPageState extends State<MyChatPage> {
                   Navigator.push(
                       context,
                       CupertinoPageRoute(
-                          builder: (context) =>
-                              PrivateChat(contactName: "好友$index")));
+                          builder: (context) => PrivateChat(
+                                contactName: chatList[index].contactName,
+                                chatID: chatList[index].chatID,
+                              )));
                 },
               );
             },
