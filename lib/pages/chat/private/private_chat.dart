@@ -28,7 +28,7 @@ class _PrivateChatState extends State<PrivateChat> {
             contactName: widget.contactName, chatID: widget.chatID),
       ),
       //TODO:消息列表
-      child: Center(),
+      child: const Center(),
     );
   }
 }
