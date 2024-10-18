@@ -22,10 +22,12 @@ class _PrivateChatState extends State<PrivateChat> {
           },
         ),
         middle: Text(widget.contactName),
-        trailing: ContactCardGestureDetector(contactName: widget.contactName,),
+        trailing: ContactCardGestureDetector(
+          contactName: widget.contactName,
+        ),
       ),
       //TODO:消息列表
-      child: Center(),
+      child: const Center(),
     );
   }
 }
