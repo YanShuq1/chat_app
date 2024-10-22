@@ -1,6 +1,10 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../moments/moments.dart';
+import 'profile/profile.dart';
+import 'setting/setting.dart';
+
 class MyCardPage extends StatelessWidget {
   const MyCardPage({super.key});
 
@@ -69,39 +73,35 @@ class CardPageButton extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        // 个人资料按钮
-        _buildButton("个人资料", context),
-        // 空间按钮
-        _buildButton("空间", context),
-        // 设置按钮
-        _buildButton("设置", context),
+        _buildButton("个人资料", context, ProfilePage()),
+        _buildButton("空间", context, MyMomemntsPage()),
+        _buildButton("设置", context, SettingsPage()),
       ],
     );
   }
 
-  // 创建一个按钮的私有方法
-  Widget _buildButton(String title, BuildContext context) {
+  Widget _buildButton(String title, BuildContext context, Widget page) {
     return Container(
-      margin:
-          const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12), // 设置按钮间距
+      margin: const EdgeInsets.symmetric(vertical: 15.0, horizontal: 12),
       child: Row(
         children: [
           Expanded(
-            // 使用 Expanded 来使按钮宽度相同
             child: CupertinoButton(
-              color: CupertinoColors.white, // 设置按钮的背景色
-              borderRadius: BorderRadius.circular(10), // 设置圆角
-              padding: const EdgeInsets.symmetric(
-                  vertical: 10.0, horizontal: 20.0), // 设置内边距
+              color: CupertinoColors.white,
+              borderRadius: BorderRadius.circular(10),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
               child: Text(
                 title,
-                style: const TextStyle(
-                    color: Color.fromARGB(255, 191, 215, 239)), // 设置文本颜色
-                textAlign: TextAlign.center, // 文本居中
+                style:
+                    const TextStyle(color: Color.fromARGB(255, 191, 215, 239)),
+                textAlign: TextAlign.center,
               ),
               onPressed: () {
-                // TODO: 跳转到相应页面
-                print("跳转到$title 页面");
+                Navigator.push(
+                  context,
+                  CupertinoPageRoute(builder: (context) => page),
+                );
               },
             ),
           ),
