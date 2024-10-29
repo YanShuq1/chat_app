@@ -84,7 +84,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // 显示编辑昵称的对话框
   void _showEditNicknameDialog(BuildContext context) {
-    TextEditingController _controller = TextEditingController(text: nickname);
+    TextEditingController controller = TextEditingController(text: nickname);
 
     showCupertinoDialog(
       context: context,
@@ -92,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage> {
         return CupertinoAlertDialog(
           title: const Text("编辑昵称"),
           content: CupertinoTextField(
-            controller: _controller, // 绑定当前昵称
+            controller: controller, // 绑定当前昵称
           ),
           actions: [
             CupertinoDialogAction(
@@ -104,7 +104,7 @@ class _ProfilePageState extends State<ProfilePage> {
             CupertinoDialogAction(
               onPressed: () {
                 setState(() {
-                  nickname = _controller.text; // 更新昵称
+                  nickname = controller.text; // 更新昵称
                 });
                 Navigator.pop(context); // 关闭对话框
               },
@@ -123,11 +123,11 @@ class ProfileTile extends StatelessWidget {
   final VoidCallback? onTap; // 点击事件回调
 
   const ProfileTile({
-    Key? key,
+    super.key,
     required this.title,
     required this.trailing,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

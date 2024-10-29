@@ -48,11 +48,13 @@ class _AddContactButtonState extends State<AddContactButton> {
           color:
               _isAdd ? CupertinoColors.systemGrey : CupertinoColors.activeBlue,
           onPressed: () {
-            saveChatList(Chattile(
-                chatID: widget.chatID, contactName: widget.contactName));
-            saveContactList(Contact(
-                chatID: widget.chatID, contactName: widget.contactName));
-            _toggleAdd();
+            if (_isAdd == false) {
+              saveChatList(Chattile(
+                  chatID: widget.chatID, contactName: widget.contactName));
+              saveContactList(Contact(
+                  chatID: widget.chatID, contactName: widget.contactName));
+              _toggleAdd();
+            }
           },
           child: Text(
             _isAdd ? "已添加" : "添加",

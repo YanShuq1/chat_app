@@ -21,7 +21,7 @@ class _MyChatPageState extends State<MyChatPage> {
     loadChatList();
   }
 
-  void _onChatAdded(){
+  void _onChatChanged() {
     setState(() {
       loadChatList();
     });
@@ -31,7 +31,9 @@ class _MyChatPageState extends State<MyChatPage> {
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
         navigationBar: CupertinoNavigationBar(
-          trailing: ContactsManageGestureDetector(onAdded:_onChatAdded,),
+          trailing: ContactsManageGestureDetector(
+            onAdded: _onChatChanged, //回调函数
+          ),
           middle: const Text("Chat"),
         ),
         child: CupertinoScrollbar(
@@ -48,30 +50,62 @@ class _MyChatPageState extends State<MyChatPage> {
             //TODO:获取消息列表数
             itemCount: chatList.length,
             itemBuilder: (BuildContext context, int index) {
-              return CupertinoListTile(
-                //TODO：好友头像、ID、最近消息、最近消息发送时间获取，点击事件处理
-                leading: const Icon(CupertinoIcons.person),
-                title: Text(chatList[index].contactName),
-                subtitle: const Text(
-                  "最近消息...",
-                  style: TextStyle(
-                    fontSize: 10.0,
-                  ),
-                ),
-                trailing: Text("8:${index.toString().padLeft(2, '0')}",
-                    style: const TextStyle(
-                      color: CupertinoColors.systemGrey2,
-                      fontSize: 10.0,
-                    )),
-                onTap: () {
-                  Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                          builder: (context) => PrivateChat(
-                                contactName: chatList[index].contactName,
-                                chatID: chatList[index].chatID,
-                              )));
+              return GestureDetector(
+                //长摁弹出删除dialog
+                onLongPress: () {
+                  showCupertinoDialog(
+                      context: context,
+                      builder: (context) {
+                        return CupertinoAlertDialog(
+                          title: const Text("确定删除好友？"),
+                          actions: [
+                            CupertinoDialogAction(
+                              child: const Text(
+                                "确定",
+                                style:
+                                    TextStyle(color: CupertinoColors.systemRed),
+                              ),
+                              onPressed: () {
+                                chatList.removeAt(index);
+                                _onChatChanged();
+                                Navigator.pop(context);
+                              },
+                            ),
+                            CupertinoDialogAction(
+                              child: const Text("取消"),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            )
+                          ],
+                        );
+                      });
                 },
+                child: CupertinoListTile(
+                  //TODO：好友头像、ID、最近消息、最近消息发送时间获取，点击事件处理
+                  leading: const Icon(CupertinoIcons.person),
+                  title: Text(chatList[index].contactName),
+                  subtitle: const Text(
+                    "最近消息...",
+                    style: TextStyle(
+                      fontSize: 10.0,
+                    ),
+                  ),
+                  trailing: Text("8:${index.toString().padLeft(2, '0')}",
+                      style: const TextStyle(
+                        color: CupertinoColors.systemGrey2,
+                        fontSize: 10.0,
+                      )),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => PrivateChat(
+                                  contactName: chatList[index].contactName,
+                                  chatID: chatList[index].chatID,
+                                )));
+                  },
+                ),
               );
             },
           ),

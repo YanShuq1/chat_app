@@ -67,16 +67,16 @@ class _AddContactPageState extends State<AddContactPage> {
                 height: 30,
               ),
               title: Text(
-                "ContactName",
-                style: TextStyle(fontSize: 13),
+                "好友[$searchingID]",
+                style: const TextStyle(fontSize: 13),
               ),
               subtitle: Text(
                 "chatID:$searchingID",
-                style: TextStyle(fontSize: 10),
+                style: const TextStyle(fontSize: 10),
               ),
               trailing: AddContactButton(
                 chatID: searchingID,
-                contactName: "ContactName",
+                contactName: "好友[$searchingID]",
                 onAdded: widget.onAdded,
               ),
             )

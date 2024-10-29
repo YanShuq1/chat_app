@@ -64,7 +64,7 @@ class _SettingsPageState extends State<SettingsPage> {
               child: const Text("退出账号"),
               onPressed: () {
                 // 退出逻辑
-                print("退出账号");
+                //print("退出账号");
               },
             ),
           ],

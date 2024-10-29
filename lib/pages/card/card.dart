@@ -42,7 +42,7 @@ class Avatar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        SizedBox(height: 30), // 头像顶部的空白间距
+        const SizedBox(height: 30), // 头像顶部的空白间距
         // 用户头像
         ClipRRect(
           borderRadius: BorderRadius.circular(10), // 设置头像的圆角
@@ -53,13 +53,13 @@ class Avatar extends StatelessWidget {
             fit: BoxFit.cover, // 图片充满容器
           ),
         ),
-        SizedBox(height: 10), // 头像和个性签名之间的间距
+        const SizedBox(height: 10), // 头像和个性签名之间的间距
         // 个性签名
-        Text(
+        const Text(
           "山行野宿，孤身万里",
           style: TextStyle(fontSize: 16, color: Colors.grey),
         ),
-        SizedBox(height: 10),
+        const SizedBox(height: 10),
       ],
     );
   }
@@ -73,9 +73,9 @@ class CardPageButton extends StatelessWidget {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        _buildButton("个人资料", context, ProfilePage()),
-        _buildButton("空间", context, MyMomemntsPage()),
-        _buildButton("设置", context, SettingsPage()),
+        _buildButton("个人资料", context, const ProfilePage()),
+        _buildButton("空间", context, const MyMomemntsPage()),
+        _buildButton("设置", context, const SettingsPage()),
       ],
     );
   }

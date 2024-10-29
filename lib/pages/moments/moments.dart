@@ -9,7 +9,7 @@ class MyMomemntsPage extends StatefulWidget {
 }
 
 class _MyMomemntsPageState extends State<MyMomemntsPage> {
-  String _searchQuery = ''; // 保存搜索输入的内容
+  //String _searchQuery = ''; // 保存搜索输入的内容
 
   @override
   Widget build(BuildContext context) {
@@ -85,7 +85,7 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                   child: CupertinoSearchTextField(
                     onChanged: (value) {
                       setState(() {
-                        _searchQuery = value;
+                        //_searchQuery = value;
                       });
                     },
                     onSubmitted: (value) {

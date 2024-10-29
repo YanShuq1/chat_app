@@ -32,7 +32,3 @@ class _PrivateChatState extends State<PrivateChat> {
     );
   }
 }
-
-extension on BuildContext {
-  get chatID => null;
-}
