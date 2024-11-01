@@ -1,3 +1,5 @@
+import 'package:chat_app/pages/moments/shot/shot.dart';
+import 'package:chat_app/pages/moments/story/story.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -37,17 +39,9 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                     height: 120, // Shot图片的高度
-                    child: ListView(
-                      scrollDirection: Axis.horizontal,
-                      children: [
-                        _buildShotItem('images/avatar1.jpeg'),
-                        _buildShotItem('images/avatar2.jpg'),
-                        _buildShotItem('images/avatar3.jpg'),
-                        _buildShotItem('images/avatar4.jpg'),
-                      ],
-                    ),
+                    child: Shot(), // 使用 Shot Widget
                   ),
 
                   // Story Section
@@ -61,42 +55,22 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                       ),
                     ),
                   ),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics:
-                        const NeverScrollableScrollPhysics(), // 禁用滚动让外层滚动生效
-                    itemCount: 10, // 示例内容的个数
-                    itemBuilder: (context, index) {
-                      return _buildStoryItem();
-                    },
-                  ),
+                  const Story(), // 使用 Story Widget
                 ],
               ),
             ),
 
-            // 搜索栏固定在顶部，并且设置透明度
+            // 搜索栏
             Positioned(
               top: 0,
               left: 0,
               right: 0,
-              child: Opacity(
-                opacity: 0.9, // 设置透明度为90%
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: CupertinoSearchTextField(
-                    onChanged: (value) {
-                      setState(() {
-                        _searchQuery = value;
-                      });
-                    },
-                    onSubmitted: (value) {
-                      // 处理搜索提交逻辑
-                    },
-                    backgroundColor: CupertinoColors.systemGrey
-                        .withOpacity(0.3), // 搜索框的背景颜色透明度
-                    placeholder: "Search...", // 提示文字
-                  ),
-                ),
+              child: SearchBar(
+                onChanged: (value) {
+                  setState(() {
+                    _searchQuery = value;
+                  });
+                },
               ),
             ),
 
@@ -108,7 +82,7 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                 onPressed: () {
                   // 发布Shot或Story的逻辑
                 },
-                backgroundColor: CupertinoColors.activeBlue,
+                backgroundColor: const Color.fromARGB(255, 168, 195, 224),
                 child: const Icon(CupertinoIcons.add),
               ),
             ),
@@ -117,72 +91,43 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
       ),
     );
   }
+}
 
-  // 构建Shot的图片项目
-  Widget _buildShotItem(String imagePath) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: Image.asset(
-          imagePath,
-          width: 100, // 图片宽度
-          height: 100, // 图片高度
-          fit: BoxFit.cover,
+// SearchBar: 自定义搜索栏小部件
+class SearchBar extends StatelessWidget {
+  final ValueChanged<String> onChanged;
+
+  const SearchBar({super.key, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Opacity(
+      opacity: 0.9, // 设置透明度为90%
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: CupertinoSearchTextField(
+          onChanged: onChanged,
+          onSubmitted: (value) {
+            // 处理搜索提交逻辑
+          },
+          backgroundColor: CupertinoColors.systemGrey.withOpacity(0.3),
+          placeholder: "Search...", // 提示文字
         ),
       ),
     );
   }
+}
 
-  // 构建Story的项目
-  Widget _buildStoryItem() {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              CircleAvatar(
-                backgroundImage: AssetImage('images/avatar1.jpeg'),
-                radius: 24,
-              ),
-              SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '海小宝',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  Text(
-                    '1 hour ago',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: CupertinoColors.inactiveGray,
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Text("月色好美!!!"),
-          const SizedBox(height: 10),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              'images/avatar1.jpeg',
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
-            ),
-          ),
-        ],
-      ),
+// CustomDivider: 自定义分割线小部件
+class CustomDivider extends StatelessWidget {
+  const CustomDivider({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16.0),
+      height: 1,
+      color: CupertinoColors.separator,
     );
   }
 }
