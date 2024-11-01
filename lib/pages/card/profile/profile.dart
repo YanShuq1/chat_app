@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,6 +11,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String nickname = "我爱睡觉"; // 昵称的初始值
+  String userid = "U2022niuniu";
 
   @override
   Widget build(BuildContext context) {
@@ -45,14 +47,25 @@ class _ProfilePageState extends State<ProfilePage> {
             },
           ),
           const CustomDivider(),
-          const ProfileTile(
-            title: "二维码",
-            trailing: Image(
-              image: NetworkImage(
-                  "https://th.bing.com/th/id/R.bcd18b2eff79aa76c210cb1b4fa9e718?rik=TWBJEYvTNbweXA&riu=http%3a%2f%2fpic.616pic.com%2fys_bnew_img%2f00%2f10%2f41%2fe0SAYdMOs1.jpg&ehk=o1kc%2fcW7P17uacN%2fn%2fqoQKqoYYaY3TmPdLFC0lXqfkM%3d&risl=&pid=ImgRaw&r=0"), // 二维码的URL
-              width: 50,
-              height: 50,
+          ProfileTile(
+            title: "用户id",
+            trailing: Text(
+              userid,
+              style: const TextStyle(color: CupertinoColors.inactiveGray),
             ),
+            onTap: () {},
+          ),
+          const CustomDivider(),
+          ProfileTile(
+            title: "二维码",
+            trailing: QrImageView(
+              data: userid, // 使用用户ID作为二维码内容
+              version: QrVersions.auto,
+              size: 50,
+            ),
+            onTap: () {
+              _showQrCodeDialog(context, userid); // 点击放大二维码
+            },
           ),
           const CustomDivider(),
         ],
@@ -115,8 +128,37 @@ class _ProfilePageState extends State<ProfilePage> {
       },
     );
   }
+
+  // 显示放大二维码的对话框
+  void _showQrCodeDialog(BuildContext context, String data) {
+    showCupertinoDialog(
+      context: context,
+      builder: (context) {
+        return CupertinoPageScaffold(
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pop(context); // 点击二维码关闭对话框
+            },
+            child: Container(
+              // color: Colors.white,
+              child: Center(
+                child: QrImageView(
+                  data: data,
+                  version: QrVersions.auto,
+                  size: 300, // 放大的二维码尺寸
+                  embeddedImage: NetworkImage(
+                      'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg'),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
+// ProfileTile: 用于展示个人信息项的小部件
 class ProfileTile extends StatelessWidget {
   final String title;
   final Widget trailing;
@@ -152,6 +194,7 @@ class ProfileTile extends StatelessWidget {
   }
 }
 
+// CustomDivider: 自定义分割线小部件
 class CustomDivider extends StatelessWidget {
   const CustomDivider({super.key});
 

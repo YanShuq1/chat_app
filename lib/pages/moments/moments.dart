@@ -9,7 +9,7 @@ class MyMomemntsPage extends StatefulWidget {
 }
 
 class _MyMomemntsPageState extends State<MyMomemntsPage> {
-  //String _searchQuery = ''; // 保存搜索输入的内容
+  String _searchQuery = ''; // 保存搜索输入的内容
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +27,8 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Shot Section
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
                       'Shot',
                       style: TextStyle(
@@ -51,8 +51,8 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                   ),
 
                   // Story Section
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
+                  const Padding(
+                    padding: EdgeInsets.all(16.0),
                     child: Text(
                       'Story',
                       style: TextStyle(
@@ -63,7 +63,8 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                   ),
                   ListView.builder(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(), // 禁用滚动让外层滚动生效
+                    physics:
+                        const NeverScrollableScrollPhysics(), // 禁用滚动让外层滚动生效
                     itemCount: 10, // 示例内容的个数
                     itemBuilder: (context, index) {
                       return _buildStoryItem();
@@ -85,7 +86,7 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                   child: CupertinoSearchTextField(
                     onChanged: (value) {
                       setState(() {
-                        //_searchQuery = value;
+                        _searchQuery = value;
                       });
                     },
                     onSubmitted: (value) {
@@ -108,7 +109,7 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                   // 发布Shot或Story的逻辑
                 },
                 backgroundColor: CupertinoColors.activeBlue,
-                child: Icon(CupertinoIcons.add),
+                child: const Icon(CupertinoIcons.add),
               ),
             ),
           ],
@@ -140,7 +141,7 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          const Row(
             children: [
               CircleAvatar(
                 backgroundImage: AssetImage('images/avatar1.jpeg'),
@@ -168,9 +169,9 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
               ),
             ],
           ),
-          SizedBox(height: 10),
-          Text("月色好美!!!"),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
+          const Text("月色好美!!!"),
+          const SizedBox(height: 10),
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.asset(
