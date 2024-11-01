@@ -57,7 +57,7 @@ class _MyChatPageState extends State<MyChatPage> {
                       context: context,
                       builder: (context) {
                         return CupertinoAlertDialog(
-                          title: const Text("确定删除好友？"),
+                          title: const Text("确定删除对话？"),
                           actions: [
                             CupertinoDialogAction(
                               child: const Text(

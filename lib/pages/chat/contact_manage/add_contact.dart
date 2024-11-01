@@ -76,7 +76,7 @@ class _AddContactPageState extends State<AddContactPage> {
               ),
               trailing: AddContactButton(
                 chatID: searchingID,
-                contactName: "好友[$searchingID]",
+                contactName: "$searchingID[好友]",
                 onAdded: widget.onAdded,
               ),
             )

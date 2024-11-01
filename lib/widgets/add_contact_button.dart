@@ -1,6 +1,8 @@
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
+import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 //添加好友按钮
 class AddContactButton extends StatefulWidget {
@@ -25,15 +27,31 @@ class _AddContactButtonState extends State<AddContactButton> {
   void initState() {
     super.initState();
     loadContactList();
+    _checkIfAdded();
     setState(() {
       _isAdd = contactList.any((contact) => contact.chatID == widget.chatID);
+    });
+  }
+
+  void _checkIfAdded() {
+    final contactProvider =
+        Provider.of<ContactProvider>(context, listen: false);
+    setState(() {
+      _isAdd = contactProvider.contacts
+          .any((contact) => contact.chatID == widget.chatID);
     });
   }
 
   void _toggleAdd() {
     setState(() {
       _isAdd = true;
-      loadChatList();
+      final contact =
+          Contact(chatID: widget.chatID, contactName: widget.contactName);
+      Provider.of<ContactProvider>(context, listen: false).addContact(contact);
+      saveChatList(
+          Chattile(chatID: widget.chatID, contactName: widget.contactName));
+      saveContactList(
+          Contact(chatID: widget.chatID, contactName: widget.contactName));
       widget.onAdded(); //回调函数，通知父组件
     });
   }
@@ -49,10 +67,6 @@ class _AddContactButtonState extends State<AddContactButton> {
               _isAdd ? CupertinoColors.systemGrey : CupertinoColors.activeBlue,
           onPressed: () {
             if (_isAdd == false) {
-              saveChatList(Chattile(
-                  chatID: widget.chatID, contactName: widget.contactName));
-              saveContactList(Contact(
-                  chatID: widget.chatID, contactName: widget.contactName));
               _toggleAdd();
             }
           },
