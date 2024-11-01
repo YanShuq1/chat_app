@@ -45,6 +45,6 @@ Future<List<Contact>> loadContactList() async {
     return [];
   }
   return jsonList
-          .map((json) => ContactJson.fromJson(jsonDecode(json)))
-          .toList();
+      .map((json) => ContactJson.fromJson(jsonDecode(json)))
+      .toList();
 }
