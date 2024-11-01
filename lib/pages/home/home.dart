@@ -46,7 +46,7 @@ class _MyHomePageState extends State<MyHomePage> {
             case 0:
               returnView = CupertinoTabView(
                 builder: (context) {
-                  return const MyMomemntsPage();
+                  return const MyMomentsPage();
                 },
               );
               break;
