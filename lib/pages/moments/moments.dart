@@ -23,13 +23,13 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
         child: Stack(
           children: [
             // 背景内容可以滚动
-            SingleChildScrollView(
-              padding: const EdgeInsets.only(top: 60), // 给搜索框留出空间
+            const SingleChildScrollView(
+              padding: EdgeInsets.only(top: 60), // 给搜索框留出空间
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // Shot Section
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(horizontal: 16.0),
                     child: Text(
                       'Shot',
@@ -39,13 +39,13 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                     height: 120, // Shot图片的高度
                     child: Shot(), // 使用 Shot Widget
                   ),
 
                   // Story Section
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.all(16.0),
                     child: Text(
                       'Story',
@@ -55,7 +55,7 @@ class _MyMomemntsPageState extends State<MyMomemntsPage> {
                       ),
                     ),
                   ),
-                  const Story(), // 使用 Story Widget
+                  Story(), // 使用 Story Widget
                 ],
               ),
             ),

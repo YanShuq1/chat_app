@@ -146,7 +146,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   data: data,
                   version: QrVersions.auto,
                   size: 300, // 放大的二维码尺寸
-                  embeddedImage: NetworkImage(
+                  embeddedImage: const NetworkImage(
                       'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg'),
                 ),
               ),

@@ -31,9 +31,9 @@ class Story extends StatelessWidget {
                 radius: 24,
               ),
               const SizedBox(width: 10),
-              Column(
+              const Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
                     '海小宝',
                     style: TextStyle(
@@ -116,7 +116,7 @@ class Story extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              LikeButtonWithAnimation(), // 替换为带动画效果的 LikeButton
+              const LikeButtonWithAnimation(), // 替换为带动画效果的 LikeButton
               _buildActionButton(
                 icon: CupertinoIcons.chat_bubble_text,
                 label: 'Comment',
@@ -218,7 +218,7 @@ class _LikeButtonWithAnimationState extends State<LikeButtonWithAnimation>
       },
     );
 
-    overlay?.insert(overlayEntry);
+    overlay.insert(overlayEntry);
     _overlayEntries.add(overlayEntry);
     _controller.forward(from: 0);
   }
@@ -283,7 +283,7 @@ class AnimatedHeart extends StatelessWidget {
             opacity: 1 - animation.value / -50,
             child: Transform.translate(
               offset: Offset(0, animation.value),
-              child: Icon(
+              child: const Icon(
                 CupertinoIcons.heart_fill,
                 color: Colors.red,
                 size: 30,
