@@ -1,8 +1,10 @@
 import 'dart:io';
-
+import 'package:chat_app/provider/shot_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:chat_app/model/shotModel.dart';
+import 'package:provider/provider.dart'; // 导入 ShotModel
 
 class CreateShot extends StatefulWidget {
   const CreateShot({super.key});
@@ -13,7 +15,6 @@ class CreateShot extends StatefulWidget {
 
 class _CreateShotState extends State<CreateShot> {
   XFile? _selectedImage; // 保存选择的图片
-
   final ImagePicker _picker = ImagePicker();
 
   // 从图库中选择图片
@@ -23,6 +24,22 @@ class _CreateShotState extends State<CreateShot> {
       setState(() {
         _selectedImage = image;
       });
+    }
+  }
+
+  // 将 shot 添加到 Hive
+  Future<void> _addShotToHive() async {
+    if (_selectedImage != null) {
+      final newShot = ShotModel(
+        imagePath: _selectedImage!.path,
+        avatarPath: 'images/avatar2.jpg',
+      );
+      // 使用 Provider 添加新的 Shot
+      await Provider.of<ShotProvider>(context, listen: false).addShot(newShot);
+      print("已经添加进来\n");
+      Navigator.of(context).pop(); // 返回上一个页面
+    } else {
+      print("No image selected");
     }
   }
 
@@ -96,9 +113,7 @@ class _CreateShotState extends State<CreateShot> {
                     child: CupertinoButton(
                       padding: EdgeInsets.zero, // 去除内边距
                       color: Colors.green.withOpacity(0.3),
-                      onPressed: () {
-                        // 确认发布的逻辑
-                      },
+                      onPressed: _addShotToHive, // 调用添加到 Hive 的方法
                       child: const Icon(
                         CupertinoIcons.check_mark,
                         size: 24,

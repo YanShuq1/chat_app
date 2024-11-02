@@ -1,61 +1,31 @@
+import 'dart:io';
+
 import 'package:chat_app/model/shotModel.dart';
+import 'package:chat_app/provider/shot_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:provider/provider.dart';
 
 class Shot extends StatelessWidget {
   const Shot({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<ShotModel>>(
-      future: _loadShots(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+    return Consumer<ShotProvider>(
+      builder: (context, shotProvider, child) {
+        // 如果数据还在加载，显示加载指示器
+        if (shotProvider.shots.isEmpty) {
           return Center(child: CircularProgressIndicator());
         }
 
-        final shots = snapshot.data ?? [];
-
         return ListView(
           scrollDirection: Axis.horizontal,
-          children: shots.map((shot) => _buildShotItem(context, shot)).toList(),
+          children: shotProvider.shots
+              .map((shot) => _buildShotItem(context, shot))
+              .toList(),
         );
       },
     );
-  }
-
-  Future<List<ShotModel>> _loadShots() async {
-    final box = await Hive.openBox<ShotModel>('shots');
-
-    // 清空盒子中的所有数据,测试用的
-    await box.clear();
-
-    if (box.isEmpty) {
-      // 添加默认数据
-      final defaultShot = ShotModel(
-        imagePath: 'images/avatar1.jpeg',
-        avatarPath: 'images/avatar2.jpg', // 替换为你的默认头像路径
-      );
-      await box.add(defaultShot);
-
-      final defaultShot1 = ShotModel(
-        imagePath: 'images/avatar2.jpg',
-        avatarPath: 'images/avatar3.jpg',
-      );
-      await box.add(defaultShot1);
-
-      final defaultShot2 = ShotModel(
-        imagePath: 'images/avatar2.jpg',
-        avatarPath: 'images/avatar4.jpg',
-      );
-      await box.add(defaultShot2);
-    }
-
-    // 打印盒子中的项目数量
-    print('Number of shots: ${box.length}');
-
-    return box.values.toList();
   }
 
   Widget _buildShotItem(BuildContext context, ShotModel shot) {
@@ -67,11 +37,32 @@ class Shot extends StatelessWidget {
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                shot.imagePath,
-                width: 150,
-                height: 150,
-                fit: BoxFit.cover,
+              child: FutureBuilder<ImageProvider>(
+                future: _loadImage(shot.imagePath),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Container(
+                      width: 150,
+                      height: 150,
+                      child: Center(child: CircularProgressIndicator()),
+                    );
+                  } else if (snapshot.hasError) {
+                    // 处理错误情况，比如返回一个默认图片
+                    return Image.asset(
+                      'images/avatar2.jpg', // 替换为你的默认图片路径
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    );
+                  } else {
+                    return Image(
+                      image: snapshot.data!,
+                      width: 150,
+                      height: 150,
+                      fit: BoxFit.cover,
+                    );
+                  }
+                },
               ),
             ),
             Positioned(
@@ -95,23 +86,48 @@ class Shot extends StatelessWidget {
     );
   }
 
+  Future<ImageProvider> _loadImage(String imagePath) async {
+    // 检查图片是否存在于 assets 中
+    if (await File(imagePath).exists()) {
+      return FileImage(File(imagePath));
+    } else {
+      return AssetImage(imagePath); // 如果找不到，尝试从 assets 加载
+    }
+  }
+
   void _showImageDialog(BuildContext context, String imagePath) {
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
-        return CupertinoAlertDialog(
-          content: GestureDetector(
-            onTap: () {
-              Navigator.of(context).pop();
-            },
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                imagePath,
-                fit: BoxFit.contain,
-              ),
-            ),
-          ),
+        return FutureBuilder<ImageProvider>(
+          future: _loadImage(imagePath),
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return CupertinoAlertDialog(
+                content: Image.asset(
+                  'images/avatar2.jpg', // 替换为你的默认图片路径
+                  fit: BoxFit.contain,
+                ),
+              );
+            } else {
+              return CupertinoAlertDialog(
+                content: GestureDetector(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image(
+                      image: snapshot.data!,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+              );
+            }
+          },
         );
       },
     );
