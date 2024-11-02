@@ -1,9 +1,9 @@
 import 'package:chat_app/model/shotModel.dart';
+import 'package:chat_app/model/storyModel.dart';
 import 'package:chat_app/pages/home/home.dart';
 import 'package:chat_app/provider/contact_provider.dart';
 import 'package:chat_app/provider/shot_provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +11,8 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized(); // 确保初始化
 
   await Hive.initFlutter(); // 初始化 Hive
-  Hive.registerAdapter(ShotModelAdapter()); // 注册适配器
+  Hive.registerAdapter(ShotModelAdapter()); // 注册shot适配器
+  Hive.registerAdapter(StoryModelAdapter());
   await Hive.openBox<ShotModel>('shots'); // 打开 Hive 数据库
 
   final box = Hive.box<ShotModel>('shots'); // 直接获取已打开的 box
