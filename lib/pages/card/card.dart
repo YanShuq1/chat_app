@@ -74,7 +74,7 @@ class CardPageButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         _buildButton("个人资料", context, const ProfilePage()),
-        _buildButton("空间", context, const MyMomemntsPage()),
+        _buildButton("空间", context, const MyMomentsPage()),
         _buildButton("设置", context, const SettingsPage()),
       ],
     );
