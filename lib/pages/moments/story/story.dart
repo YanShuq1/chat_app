@@ -1,24 +1,67 @@
+import 'package:chat_app/model/storyModel.dart';
 import 'package:chat_app/pages/moments/story/likeButton.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 class Story extends StatelessWidget {
   const Story({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return _buildStoryItem(context);
+    return FutureBuilder(
+      future: _loadStories(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        List<StoryModel> stories = snapshot.data as List<StoryModel>;
+
+        return ListView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: stories.length,
+          itemBuilder: (context, index) {
+            return _buildStoryItem(context, stories[index]);
+          },
+        );
       },
     );
   }
 
-  // 构建Story的项目
-  Widget _buildStoryItem(BuildContext context) {
+  Future<List<StoryModel>> _loadStories() async {
+    var box = await Hive.openBox<StoryModel>('stories');
+    await box.clear();
+    // 如果没有数据，初始化一个默认故事
+    if (box.isEmpty) {
+      var defaultStory = StoryModel(
+        username: '海小宝',
+        avatarUrl: 'images/avatar1.jpeg',
+        timestamp: '1 hour ago',
+        text: '月色好美!!!',
+        imageUrl: 'images/story1.png',
+        likes: 2500,
+        comments: 400,
+      );
+      await box.add(defaultStory);
+      var defaultStory1 = StoryModel(
+        username: '海小宝',
+        avatarUrl: 'images/avatar1.jpeg',
+        timestamp: '1 hour ago',
+        text: '月色好美!!!',
+        imageUrl: 'images/story_image1.jpeg',
+        likes: 2500,
+        comments: 400,
+      );
+      await box.add(defaultStory1);
+    }
+
+    return box.values.toList();
+  }
+
+  // 构建 Story 的项目
+  Widget _buildStoryItem(BuildContext context, StoryModel story) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
@@ -27,24 +70,24 @@ class Story extends StatelessWidget {
           // 用户信息
           Row(
             children: [
-              const CircleAvatar(
-                backgroundImage: AssetImage('images/avatar1.jpeg'),
+              CircleAvatar(
+                backgroundImage: AssetImage(story.avatarUrl),
                 radius: 24,
               ),
               const SizedBox(width: 10),
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    '海小宝',
-                    style: TextStyle(
+                    story.username,
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   Text(
-                    '1 hour ago',
-                    style: TextStyle(
+                    story.timestamp,
+                    style: const TextStyle(
                       fontSize: 12,
                       color: CupertinoColors.inactiveGray,
                     ),
@@ -62,13 +105,13 @@ class Story extends StatelessWidget {
           ),
           const SizedBox(height: 10),
           // 文本内容
-          const Text("月色好美!!!"),
+          Text(story.text),
           const SizedBox(height: 10),
           // 图片内容
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
             child: Image.asset(
-              'images/avatar1.jpeg',
+              story.imageUrl,
               width: double.infinity,
               height: 180,
               fit: BoxFit.cover,
@@ -98,14 +141,14 @@ class Story extends StatelessWidget {
                     color: Colors.red, size: 18),
               ),
               const SizedBox(width: 8),
-              const Text(
-                '2.5 K',
-                style: TextStyle(fontWeight: FontWeight.bold),
+              Text(
+                '${story.likes} K',
+                style: const TextStyle(fontWeight: FontWeight.bold),
               ),
               const Spacer(),
-              const Text(
-                '400 comments',
-                style: TextStyle(
+              Text(
+                '${story.comments} comments',
+                style: const TextStyle(
                   color: CupertinoColors.inactiveGray,
                   fontSize: 14,
                 ),
@@ -117,7 +160,7 @@ class Story extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              LikeButtonWithAnimation(), // 替换为带动画效果的 LikeButton
+              LikeButtonWithAnimation(),
               _buildActionButton(
                 icon: CupertinoIcons.chat_bubble_text,
                 label: 'Comment',
