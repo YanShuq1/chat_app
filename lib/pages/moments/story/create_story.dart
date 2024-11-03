@@ -1,7 +1,10 @@
+import 'dart:io';
 import 'dart:ui';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:hive/hive.dart';
+import 'package:chat_app/model/storyModel.dart';
 
 class CreateStory extends StatefulWidget {
   const CreateStory({super.key});
@@ -12,13 +15,27 @@ class CreateStory extends StatefulWidget {
 
 class _CreateStoryState extends State<CreateStory> {
   bool _showButtons = false;
-  bool _isImageScaled = false; // Controls the zoom effect
+  bool _isImageScaled = false;
+  String _storyText = '';
+  String? _selectedImagePath;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeHive();
+  }
+
+  Future<void> _initializeHive() async {
+    //await Hive.openBox<StoryModel>('stories');
+  }
 
   Future<void> _pickImageFromGallery() async {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.gallery);
     if (image != null) {
-      print('Selected image from gallery: ${image.path}');
+      setState(() {
+        _selectedImagePath = image.path;
+      });
     }
   }
 
@@ -26,15 +43,34 @@ class _CreateStoryState extends State<CreateStory> {
     final ImagePicker picker = ImagePicker();
     final XFile? image = await picker.pickImage(source: ImageSource.camera);
     if (image != null) {
-      print('Captured image from camera: ${image.path}');
+      setState(() {
+        _selectedImagePath = image.path;
+      });
     }
+  }
+
+  Future<void> _submitStory() async {
+    if (_storyText.isEmpty || _selectedImagePath == null) return;
+
+    var box = Hive.box<StoryModel>('stories');
+    var newStory = StoryModel(
+      username: '海小宝',
+      avatarUrl: 'images/avatar2.jpg',
+      timestamp: DateTime.now().toString(),
+      text: _storyText,
+      imageUrl: _selectedImagePath!,
+      likes: 0,
+      comments: 0,
+    );
+    await box.add(newStory);
+    Navigator.pop(context); // Close the CreateStory page
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        middle: const Text('Story'),
+        middle: const Text('Create Story'),
         leading: GestureDetector(
           onTap: () {
             Navigator.pop(context);
@@ -42,9 +78,7 @@ class _CreateStoryState extends State<CreateStory> {
           child: const Icon(CupertinoIcons.back),
         ),
         trailing: GestureDetector(
-          onTap: () {
-            print("Story submitted!");
-          },
+          onTap: _submitStory,
           child: const Icon(CupertinoIcons.check_mark),
         ),
       ),
@@ -57,10 +91,15 @@ class _CreateStoryState extends State<CreateStory> {
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 const SizedBox(height: 120),
-                const CupertinoTextField(
-                  placeholder: 'this moment，say something。。。',
-                  padding: EdgeInsets.symmetric(vertical: 12),
+                CupertinoTextField(
+                  placeholder: 'this moment, say something...',
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                   textAlign: TextAlign.center,
+                  onChanged: (text) {
+                    setState(() {
+                      _storyText = text;
+                    });
+                  },
                 ),
                 const SizedBox(height: 20),
                 // Image Preview with Long Press Gesture and Zoom + Blur Animation
@@ -68,12 +107,12 @@ class _CreateStoryState extends State<CreateStory> {
                   onLongPressStart: (_) {
                     setState(() {
                       _showButtons = true;
-                      _isImageScaled = true; // Scale up the image
+                      _isImageScaled = true;
                     });
                   },
                   onLongPressEnd: (_) {
                     setState(() {
-                      _isImageScaled = false; // Scale down the image
+                      _isImageScaled = false;
                     });
                   },
                   child: Stack(
@@ -95,24 +134,41 @@ class _CreateStoryState extends State<CreateStory> {
                           ),
                         ),
                       ),
-                      // Zooming image
-                      AnimatedScale(
-                        scale: _isImageScaled
-                            ? 1.2
-                            : 1.0, // Zoom factor when scaled
-                        duration: const Duration(milliseconds: 200),
-                        curve: Curves.easeInOut,
-                        child: Container(
-                          width: double.infinity,
-                          height: 200,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            image: const DecorationImage(
-                              image: AssetImage('images/avatar2.jpg'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
+                      // Zooming image or default background
+                      Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: _selectedImagePath == null
+                              ? Colors.grey[300]
+                              : null,
+                          image: _selectedImagePath != null
+                              ? DecorationImage(
+                                  image: FileImage(File(_selectedImagePath!)),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
                         ),
+                        child: _selectedImagePath == null
+                            ? Center(
+                                child: Text(
+                                  'tell your story...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.bold,
+                                    shadows: [
+                                      Shadow(
+                                          color:
+                                              Color.fromARGB(82, 128, 175, 225),
+                                          offset: Offset(1, 1),
+                                          blurRadius: 4),
+                                    ],
+                                  ),
+                                ),
+                              )
+                            : null,
                       ),
                     ],
                   ),
@@ -127,8 +183,8 @@ class _CreateStoryState extends State<CreateStory> {
                         onPressed: () {
                           setState(() {
                             _showButtons = false;
+                            _selectedImagePath = null; // Reset image selection
                           });
-                          print("Cancel icon tapped!");
                         },
                         padding: EdgeInsets.zero,
                         child:
@@ -177,7 +233,7 @@ class _CreateStoryState extends State<CreateStory> {
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundImage: AssetImage('images/avatar2.jpg'),
+                      backgroundImage: const AssetImage('images/avatar2.jpg'),
                     ),
                     const SizedBox(width: 10),
                     const Text('@ 海小宝', style: TextStyle(fontSize: 16)),

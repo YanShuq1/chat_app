@@ -1,22 +1,23 @@
+import 'dart:io';
 import 'package:chat_app/model/storyModel.dart';
 import 'package:chat_app/widgets/like_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
 class Story extends StatelessWidget {
   const Story({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: _loadStories(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+    return ValueListenableBuilder(
+      valueListenable: Hive.box<StoryModel>('stories').listenable(),
+      builder: (context, Box<StoryModel> box, _) {
+        if (box.isEmpty) {
+          return const Center(child: Text("No stories available"));
         }
 
-        List<StoryModel> stories = snapshot.data as List<StoryModel>;
+        List<StoryModel> stories = box.values.toList();
 
         return ListView.builder(
           shrinkWrap: true,
@@ -30,44 +31,14 @@ class Story extends StatelessWidget {
     );
   }
 
-  Future<List<StoryModel>> _loadStories() async {
-    var box = await Hive.openBox<StoryModel>('stories');
-    await box.clear();
-    // 如果没有数据，初始化一个默认故事
-    if (box.isEmpty) {
-      var defaultStory = StoryModel(
-        username: '海小宝',
-        avatarUrl: 'images/avatar1.jpeg',
-        timestamp: '1 hour ago',
-        text: '月色好美!!!',
-        imageUrl: 'images/story1.png',
-        likes: 2500,
-        comments: 400,
-      );
-      await box.add(defaultStory);
-      var defaultStory1 = StoryModel(
-        username: '海小宝',
-        avatarUrl: 'images/avatar1.jpeg',
-        timestamp: '1 hour ago',
-        text: '月色好美!!!',
-        imageUrl: 'images/story_image1.jpeg',
-        likes: 2500,
-        comments: 400,
-      );
-      await box.add(defaultStory1);
-    }
-
-    return box.values.toList();
-  }
-
-  // 构建 Story 的项目
+  // Constructs each Story item
   Widget _buildStoryItem(BuildContext context, StoryModel story) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // 用户信息
+          // User info
           Row(
             children: [
               CircleAvatar(
@@ -98,27 +69,48 @@ class Story extends StatelessWidget {
               IconButton(
                 icon: const Icon(CupertinoIcons.ellipsis),
                 onPressed: () {
-                  // 更多选项逻辑
+                  // More options logic
                 },
               ),
             ],
           ),
           const SizedBox(height: 10),
-          // 文本内容
+          // Text content
           Text(story.text),
           const SizedBox(height: 10),
-          // 图片内容
+          // Image content
           ClipRRect(
             borderRadius: BorderRadius.circular(12),
-            child: Image.asset(
-              story.imageUrl,
-              width: double.infinity,
-              height: 180,
-              fit: BoxFit.cover,
+            child: FutureBuilder<ImageProvider>(
+              future: _loadImage(story.imageUrl),
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Container(
+                    width: double.infinity,
+                    height: 180,
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                } else if (snapshot.hasError) {
+                  // Error case, show default image
+                  return Image.asset(
+                    'images/avatar2.jpg', // Default image path
+                    width: double.infinity,
+                    height: 180,
+                    fit: BoxFit.cover,
+                  );
+                } else {
+                  return Image(
+                    image: snapshot.data!,
+                    width: double.infinity,
+                    height: 180,
+                    fit: BoxFit.cover,
+                  );
+                }
+              },
             ),
           ),
           const SizedBox(height: 10),
-          // 点赞和评论数量
+          // Likes and comments
           Row(
             children: [
               Container(
@@ -156,7 +148,7 @@ class Story extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 10),
-          // 互动按钮
+          // Interaction buttons
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -176,7 +168,17 @@ class Story extends StatelessWidget {
     );
   }
 
-  // 构建底部互动按钮
+  // Load image function
+  Future<ImageProvider> _loadImage(String imagePath) async {
+    // Check if image exists in files; if not, try loading from assets
+    if (await File(imagePath).exists()) {
+      return FileImage(File(imagePath));
+    } else {
+      return AssetImage(imagePath); // Try loading from assets if file not found
+    }
+  }
+
+  // Action button builder
   Widget _buildActionButton(
       {required IconData icon, required String label, Color? color}) {
     return TextButton.icon(
@@ -188,7 +190,7 @@ class Story extends StatelessWidget {
         ),
       ),
       onPressed: () {
-        // 按钮的逻辑
+        // Button logic
       },
       icon: Icon(icon, size: 18, color: color ?? Colors.black),
       label: Text(

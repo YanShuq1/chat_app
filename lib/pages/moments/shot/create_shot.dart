@@ -1,10 +1,9 @@
 import 'dart:io';
-import 'package:chat_app/provider/shot_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:chat_app/model/shotModel.dart';
-import 'package:provider/provider.dart'; // 导入 ShotModel
 
 class CreateShot extends StatefulWidget {
   const CreateShot({super.key});
@@ -34,9 +33,12 @@ class _CreateShotState extends State<CreateShot> {
         imagePath: _selectedImage!.path,
         avatarPath: 'images/avatar2.jpg',
       );
-      // 使用 Provider 添加新的 Shot
-      await Provider.of<ShotProvider>(context, listen: false).addShot(newShot);
-      print("已经添加进来\n");
+
+      // 将 Shot 直接添加到 Hive 中的 shots box
+      final box = Hive.box<ShotModel>('shots');
+      await box.add(newShot);
+
+      print("Shot added successfully.");
       Navigator.of(context).pop(); // 返回上一个页面
     } else {
       print("No image selected");
