@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'shotModel.g.dart'; // 生成的适配器会在这个文件中
+part 'shot_model.g.dart'; // 生成的适配器会在这个文件中
 
 @HiveType(typeId: 0)
 class ShotModel {

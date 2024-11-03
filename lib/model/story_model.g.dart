@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'storyModel.dart';
+part of 'story_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator

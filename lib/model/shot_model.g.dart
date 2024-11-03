@@ -1,10 +1,11 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'shotModel.dart';
+part of 'shot_model.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
+
 
 class ShotModelAdapter extends TypeAdapter<ShotModel> {
   @override

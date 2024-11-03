@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:chat_app/model/shotModel.dart';
+import 'package:chat_app/model/shot_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -43,10 +43,10 @@ class Shot extends StatelessWidget {
                 future: _loadImage(shot.imagePath),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Container(
+                    return SizedBox(
                       width: 150,
                       height: 150,
-                      child: Center(child: CircularProgressIndicator()),
+                      child: const Center(child: CircularProgressIndicator()),
                     );
                   } else if (snapshot.hasError) {
                     // 出现错误时显示默认图片
@@ -72,7 +72,7 @@ class Shot extends StatelessWidget {
               left: 2,
               child: Container(
                 padding: const EdgeInsets.all(2),
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   color: Colors.white,
                   shape: BoxShape.circle,
                 ),
@@ -107,7 +107,7 @@ class Shot extends StatelessWidget {
           future: _loadImage(imagePath),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator());
             } else if (snapshot.hasError) {
               return CupertinoAlertDialog(
                 content: Image.asset(

@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'storyModel.g.dart'; // 生成的适配器会在这个文件中
+part 'story_model.g.dart'; // 生成的适配器会在这个文件中
 
 @HiveType(typeId: 1) // 确保 typeId 唯一
 class StoryModel {

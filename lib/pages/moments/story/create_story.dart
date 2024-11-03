@@ -4,7 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hive/hive.dart';
-import 'package:chat_app/model/storyModel.dart';
+import 'package:chat_app/model/story_model.dart';
 
 class CreateStory extends StatefulWidget {
   const CreateStory({super.key});
@@ -151,7 +151,7 @@ class _CreateStoryState extends State<CreateStory> {
                               : null,
                         ),
                         child: _selectedImagePath == null
-                            ? Center(
+                            ? const Center(
                                 child: Text(
                                   'tell your story...',
                                   style: TextStyle(
@@ -228,15 +228,15 @@ class _CreateStoryState extends State<CreateStory> {
                   ),
                 ),
                 const SizedBox(height: 120),
-                Row(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundImage: const AssetImage('images/avatar2.jpg'),
+                      backgroundImage: AssetImage('images/avatar2.jpg'),
                     ),
-                    const SizedBox(width: 10),
-                    const Text('@ 海小宝', style: TextStyle(fontSize: 16)),
+                    SizedBox(width: 10),
+                    Text('@ 海小宝', style: TextStyle(fontSize: 16)),
                   ],
                 ),
               ],

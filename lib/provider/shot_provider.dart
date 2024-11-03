@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:chat_app/model/shotModel.dart';
+import 'package:chat_app/model/shot_model.dart';
 
 class ShotProvider extends ChangeNotifier {
   List<ShotModel> _shots = [];
