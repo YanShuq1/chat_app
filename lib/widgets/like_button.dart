@@ -61,7 +61,7 @@ class _LikeButtonWithAnimationState extends State<LikeButtonWithAnimation>
       },
     );
 
-    overlay?.insert(overlayEntry);
+    overlay.insert(overlayEntry);
     _overlayEntries.add(overlayEntry);
     _controller.forward(from: 0);
   }

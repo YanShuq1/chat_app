@@ -1,5 +1,5 @@
-import 'package:chat_app/pages/moments/shot/createshot.dart';
-import 'package:chat_app/pages/moments/story/createStory.dart';
+import 'package:chat_app/pages/moments/shot/create_shot.dart';
+import 'package:chat_app/pages/moments/story/create_story.dart';
 import 'package:chat_app/pages/moments/shot/shot.dart';
 import 'package:chat_app/pages/moments/story/story.dart';
 import 'package:flutter/cupertino.dart';

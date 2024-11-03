@@ -1,5 +1,5 @@
 import 'package:chat_app/model/storyModel.dart';
-import 'package:chat_app/pages/moments/story/likeButton.dart';
+import 'package:chat_app/widgets/like_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
@@ -75,7 +75,7 @@ class Story extends StatelessWidget {
                 radius: 24,
               ),
               const SizedBox(width: 10),
-              const Column(
+              Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
@@ -160,7 +160,7 @@ class Story extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              LikeButtonWithAnimation(),
+              const LikeButtonWithAnimation(),
               _buildActionButton(
                 icon: CupertinoIcons.chat_bubble_text,
                 label: 'Comment',

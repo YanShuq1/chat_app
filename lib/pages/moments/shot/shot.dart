@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:chat_app/model/shotModel.dart';
 import 'package:chat_app/provider/shot_provider.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +14,7 @@ class Shot extends StatelessWidget {
       builder: (context, shotProvider, child) {
         // 如果数据还在加载，显示加载指示器
         if (shotProvider.shots.isEmpty) {
-          return Center(child: CircularProgressIndicator());
+          return const Center(child: Text(""));
         }
 
         return ListView(
