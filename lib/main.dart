@@ -1,12 +1,16 @@
-import 'package:chat_app/model/shotModel.dart';
-import 'package:chat_app/model/storyModel.dart';
+import 'package:chat_app/model/shot_model.dart';
+import 'package:chat_app/model/story_model.dart';
 import 'package:chat_app/pages/home/home.dart';
 import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_core/firebase_core.dart';
 
 Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
   WidgetsFlutterBinding.ensureInitialized(); // 确保初始化
 
   await Hive.initFlutter(); // 初始化 Hive

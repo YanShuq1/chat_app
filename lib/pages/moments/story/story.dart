@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:chat_app/model/storyModel.dart';
+import 'package:chat_app/model/story_model.dart';
 import 'package:chat_app/widgets/like_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -85,10 +85,10 @@ class Story extends StatelessWidget {
               future: _loadImage(story.imageUrl),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Container(
+                  return SizedBox(
                     width: double.infinity,
                     height: 180,
-                    child: Center(child: CircularProgressIndicator()),
+                    child: const Center(child: CircularProgressIndicator()),
                   );
                 } else if (snapshot.hasError) {
                   // Error case, show default image

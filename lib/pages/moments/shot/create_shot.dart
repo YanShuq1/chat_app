@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:chat_app/model/shotModel.dart';
+import 'package:chat_app/model/shot_model.dart';
 
 class CreateShot extends StatefulWidget {
   const CreateShot({super.key});
@@ -128,15 +128,15 @@ class _CreateShotState extends State<CreateShot> {
             ),
             const SizedBox(height: 80),
             // 用户信息
-            Row(
+            const Row(
               children: [
-                const CircleAvatar(
+                CircleAvatar(
                   radius: 24,
                   backgroundImage:
                       AssetImage('images/avatar2.jpg'), // 替换成你的头像路径
                 ),
-                const SizedBox(width: 10),
-                const Text(
+                SizedBox(width: 10),
+                Text(
                   '@ 海小宝',
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),

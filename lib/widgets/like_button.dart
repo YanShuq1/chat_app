@@ -126,7 +126,7 @@ class AnimatedHeart extends StatelessWidget {
             opacity: 1 - animation.value / -50,
             child: Transform.translate(
               offset: Offset(0, animation.value),
-              child: Icon(
+              child: const Icon(
                 CupertinoIcons.heart_fill,
                 color: Colors.red,
                 size: 30,
