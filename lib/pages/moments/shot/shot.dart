@@ -43,10 +43,10 @@ class Shot extends StatelessWidget {
                 future: _loadImage(shot.imagePath),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return SizedBox(
+                    return const SizedBox(
                       width: 150,
                       height: 150,
-                      child: const Center(child: CircularProgressIndicator()),
+                      child: Center(child: CircularProgressIndicator()),
                     );
                   } else if (snapshot.hasError) {
                     // 出现错误时显示默认图片

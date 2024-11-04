@@ -40,9 +40,9 @@ dependencies:
   hive: ^2.2.0
   hive_flutter: ^1.1.0
   image_picker: ^1.1.2
-  firebase_core: ^3.6.0
-  cloud_firestore: ^5.4.4
-  firebase_auth: ^5.3.1
+  http: ^1.2.2
+  supabase_flutter: ^2.8.0
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:

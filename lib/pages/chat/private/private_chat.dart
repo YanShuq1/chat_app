@@ -1,146 +1,113 @@
-import 'package:chat_app/model/chat_message.dart';
-import 'package:chat_app/widgets/contact_card_gesture_detector.dart';
+import 'package:chat_app/model/chattile.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:cloud_firestore/cloud_firestore.dart'; // 引入 Firebase Firestore 库
-import 'package:firebase_auth/firebase_auth.dart'; // 引入 Firebase Authentication 库
-import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class PrivateChat extends StatefulWidget {
-  const PrivateChat({
-    super.key,
-    required this.contactName,
-    required this.chatID,
-  });
-
-  final String contactName;
-  final String chatID;
+  final Chattile chattile;
+  const PrivateChat({super.key, required this.chattile});
 
   @override
-  State<PrivateChat> createState() => _PrivateChatState();
+  _PrivateChatState createState() => _PrivateChatState();
 }
 
 class _PrivateChatState extends State<PrivateChat> {
-  final ScrollController _controller = ScrollController();
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  String? currentUserID;
+  final _messageController = TextEditingController();
+  List<Map<String, dynamic>> _messages = [];
 
-  Future<String?> _getCurrentUserID() async {
-    return _auth.currentUser?.uid;
+  //数据更新
+  late String contactAvatarUrl; //获取好友的头像的url
+  late String contactName;
+
+  Future<void> _sendMessage() async {
+    final message = _messageController.text.trim();
+    if (message.isEmpty) return;
+
+    //TODO:实现聊天室信息的上传与下载
+    await Supabase.instance.client.from('chatMessages').insert({
+      'chat_room_id': widget.chattile.chatRoomID,
+      'message': message,
+      'sender': Supabase.instance.client.auth.currentUser?.id,
+      'send_time': DateTime.now().toIso8601String(),
+    });
+
+    _messageController.clear();
+    _fetchMessages();
+  }
+
+  Future<void> _fetchMessages() async {
+    final response = await Supabase.instance.client
+        .from('messages')
+        .select()
+        .eq('chat_id', widget.chattile.chatRoomID)
+        .order('send_time', ascending: false);
+
+    final gotContact = await Supabase.instance.client
+        .from('profiles')
+        .select()
+        .eq('email', widget.chattile.email)
+        .single();
+    contactAvatarUrl = gotContact['avatar_url'];
+    contactName = gotContact['user_name'];
+
+    // 检查 response 是否为空来判断查询是否成功
+    setState(() {
+      _messages = List<Map<String, dynamic>>.from(response);
+      widget.chattile.avatarUrl = contactAvatarUrl;
+      widget.chattile.contactName = contactName;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMessages();
   }
 
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
-        leading: CupertinoNavigationBarBackButton(
-          previousPageTitle: "返回",
-          onPressed: () {
-            Navigator.pop(context);
-          },
-        ),
-        middle: Text(widget.contactName),
-        trailing: ContactCardGestureDetector(
-          contactName: widget.contactName,
-          chatID: widget.chatID,
-        ),
+        middle: Text(widget.chattile.contactName),
       ),
-      child: FutureBuilder<String?>(
-        future: _getCurrentUserID(),
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError || !snapshot.hasData) {
-            return const Center(child: Text("用户未登录"));
-          }
-
-          currentUserID = snapshot.data;
-
-          return CupertinoPageScaffold(
-            navigationBar: CupertinoNavigationBar(
-              leading: CupertinoNavigationBarBackButton(
-                previousPageTitle: "返回",
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              middle: Text(widget.contactName),
-              trailing: ContactCardGestureDetector(
-                contactName: widget.contactName,
-                chatID: widget.chatID,
-              ),
-            ),
-            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: _firestore
-                  .collection('chatRooms')
-                  .doc(widget.chatID)
-                  .collection('messages')
-                  .orderBy('sendTime', descending: true)
-                  .snapshots(),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  return const Center(child: Text('Error loading messages'));
-                }
-
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                }
-
-                final messages = snapshot.data!.docs.map((doc) {
-                  final data = doc.data();
-                  return ChatMessage(
-                    sender: data['senderId'],
-                    receiver: data['receiverId'],
-                    message: data['message'],
-                    sendTime: data['sendTime'],
-                  );
-                }).toList();
-
-                return CupertinoScrollbar(
-                  thickness: 5.0,
-                  thicknessWhileDragging: 10.0,
-                  radius: const Radius.circular(1.5),
-                  radiusWhileDragging: const Radius.circular(2.0),
-                  scrollbarOrientation: ScrollbarOrientation.right,
-                  controller: _controller,
-                  thumbVisibility: true,
-                  child: ListView.builder(
-                    reverse: true, // 倒序显示消息
-                    controller: _controller,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
-                      final message = messages[index];
-                      return _buildMessageItem(message);
-                    },
+      child: Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              reverse: true,
+              itemCount: _messages.length,
+              itemBuilder: (context, index) {
+                final message = _messages[index];
+                return Padding(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: CupertinoColors.lightBackgroundGray,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(message['message']),
                   ),
                 );
               },
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildMessageItem(ChatMessage message) {
-    // 判断消息发送者是否为当前用户
-    final isCurrentUser = message.sender == currentUserID;
-
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
-      alignment: isCurrentUser ? Alignment.bottomRight : Alignment.bottomLeft,
-      child: Column(
-        crossAxisAlignment:
-            isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-        children: [
-          Text(
-            message.message,
-            style: const TextStyle(fontSize: 16.0),
           ),
-          const SizedBox(height: 4.0),
-          Text(
-            message.sendTime,
-            style: const TextStyle(fontSize: 12.0, color: Colors.grey),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Row(
+              children: [
+                Expanded(
+                  child: CupertinoTextField(
+                    controller: _messageController,
+                    placeholder: '输入消息',
+                  ),
+                ),
+                CupertinoButton(
+                  onPressed: _sendMessage,
+                  child: Icon(CupertinoIcons.arrow_up_circle_fill),
+                ),
+              ],
+            ),
           ),
         ],
       ),

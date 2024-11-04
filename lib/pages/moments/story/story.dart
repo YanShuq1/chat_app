@@ -85,10 +85,10 @@ class Story extends StatelessWidget {
               future: _loadImage(story.imageUrl),
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return SizedBox(
+                  return const SizedBox(
                     width: double.infinity,
                     height: 180,
-                    child: const Center(child: CircularProgressIndicator()),
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 } else if (snapshot.hasError) {
                   // Error case, show default image

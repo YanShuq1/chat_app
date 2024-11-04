@@ -1,5 +1,7 @@
+import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/widgets/add_contact_button.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AddContactPage extends StatefulWidget {
   final VoidCallback onAdded;
@@ -10,8 +12,28 @@ class AddContactPage extends StatefulWidget {
 }
 
 class _AddContactPageState extends State<AddContactPage> {
-  String searchingID = '';
+  String searchingEmail = '';
   bool _tile = false;
+  Map<String, dynamic>? user;
+
+  Future<void> searchForFriend(String email) async {
+    try {
+      final response = await Supabase.instance.client
+          .from('profiles')
+          .select()
+          .eq('email', email)
+          .single();
+      user = response;
+      setState(() {
+        _tile = true;
+      });
+    } catch (e) {
+      print('Error: $e');
+      setState(() {
+        _tile = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -19,88 +41,54 @@ class _AddContactPageState extends State<AddContactPage> {
       title: const Text("添加好友"),
       content: Column(
         mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        textDirection: TextDirection.ltr,
         children: [
           Container(
             width: 300,
             height: 35,
             decoration: BoxDecoration(
-                border:
-                    Border.all(width: 1.0, color: CupertinoColors.systemGrey4),
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(5)),
+              border: Border.all(width: 1.0, color: CupertinoColors.systemGrey4),
+              borderRadius: BorderRadius.circular(5),
+            ),
             child: CupertinoSearchTextField(
-              backgroundColor: CupertinoColors.systemGrey5,
-              itemColor: CupertinoColors.activeBlue,
-              itemSize: 18,
-              style:
-                  const TextStyle(fontSize: 15, color: CupertinoColors.black),
-              onChanged: (value) => setState(() {
-                searchingID = value;
+              onChanged: (value) {
                 setState(() {
+                  searchingEmail = value;
                   _tile = false;
                 });
-              }),
+              },
               onSubmitted: (value) {
-                //TODO:提交搜索，添加好友逻辑实现
-                if (value.isEmpty) {
-                  setState(() {
-                    _tile = false;
-                  });
-                } else {
-                  setState(() {
-                    _tile = true;
-                  });
-                }
+                if (value.isNotEmpty) searchForFriend(value);
               },
             ),
           ),
-          if (_tile)
+          if (_tile && user != null)
             CupertinoListTile(
-              leadingToTitle: 5.0,
-              //获取好友信息,获取数据库好友数据
-              leading: Image.asset(
-                'images/defaultAvatar.jpeg',
-                width: 30,
-                height: 30,
-              ),
-              title: Text(
-                "好友[$searchingID]",
-                style: const TextStyle(fontSize: 13),
-              ),
-              subtitle: Text(
-                "chatID:$searchingID",
-                style: const TextStyle(fontSize: 10),
-              ),
+              leading: user!['avatar_url'] != null
+                  ? Image.network(user!['avatar_url'], width: 20, height: 20)
+                  : Icon(CupertinoIcons.person),
+              title: Text(user!['user_name'], style: const TextStyle(fontSize: 13)),
+              subtitle: Text(user!['email'], style: const TextStyle(fontSize: 10)),
               trailing: AddContactButton(
-                chatID: searchingID,
-                contactName: "$searchingID[好友]",
+                contact: Contact(
+                  contactName: user!['user_name'],
+                  email: user!['email'],
+                  avatarUrl: user!['avatar_url'],
+                ),
                 onAdded: widget.onAdded,
               ),
-            )
+            ),
         ],
       ),
-      actions: <Widget>[
+      actions: [
         CupertinoDialogAction(
           child: const Text("取消"),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+          onPressed: () => Navigator.pop(context),
         ),
         CupertinoDialogAction(
           child: const Text("提交搜索"),
           onPressed: () {
-            //TODO:提交搜索，添加好友逻辑实现
-            if (searchingID.isEmpty) {
-              setState(() {
-                _tile = false;
-              });
-            } else {
-              setState(() {
-                _tile = true;
-              });
+            if (searchingEmail.isNotEmpty) {
+              searchForFriend(searchingEmail);
             }
           },
         ),

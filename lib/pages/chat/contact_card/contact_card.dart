@@ -1,13 +1,13 @@
+import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/widgets/contact_to_top_switch.dart';
 import 'package:flutter/cupertino.dart';
 
 class ContactCard extends StatelessWidget {
-  const ContactCard({super.key, required this.chatID, required this.nickName});
+  const ContactCard({super.key, required this.chattile});
 
-  final String chatID;
-  final String nickName;
+  final Chattile chattile;
 
   @override
   Widget build(BuildContext context) {
@@ -43,8 +43,8 @@ class ContactCard extends StatelessWidget {
                 verticalDirection: VerticalDirection.down,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  Image.asset(
-                    'images/defaultAvatar.jpeg',
+                  Image.network(
+                    chattile.avatarUrl,
                     width: 90,
                     height: 90,
                   ),
@@ -56,7 +56,7 @@ class ContactCard extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
                         Text(
-                          nickName,
+                          chattile.contactName,
                           style: const TextStyle(
                             fontSize: 23.0,
                             fontWeight: FontWeight.w600,
@@ -64,16 +64,16 @@ class ContactCard extends StatelessWidget {
                         ),
                         //TODO:获取用户昵称和ID
                         Text(
-                          "用户名: ${contactList.firstWhere((contact) => contact.chatID == chatID).contactName}",
+                          "用户名: ${contactList.firstWhere((contact) => contact.email == chattile.email).contactName}",
                           style: const TextStyle(
                             color: CupertinoColors.systemGrey2,
                             fontSize: 15.0,
                             fontWeight: FontWeight.w400,
                           ),
                         ),
-                        const Text(
-                          "Chat账号:ChatID",
-                          style: TextStyle(
+                        Text(
+                          "email:${contactList.firstWhere((contact) => contact.email == chattile.email).email}",
+                          style: const TextStyle(
                             color: CupertinoColors.systemGrey2,
                             fontSize: 15.0,
                             fontWeight: FontWeight.w400,
@@ -85,51 +85,51 @@ class ContactCard extends StatelessWidget {
                 ],
               ),
             ),
-            SizedBox(
-              //好友备注ListTile
-              //TODO：onTap修改好友备注
-              width: 340,
-              child: Container(
-                decoration: const BoxDecoration(
-                    border: Border(
-                        bottom: BorderSide(
-                            width: 1, color: CupertinoColors.systemGrey5))),
-                padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                child: CupertinoListTile(
-                  leadingToTitle: 0,
-                  title: const Text(
-                    "设置好友备注 ",
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                  trailing: SizedBox(
-                    width: 200,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      textDirection: TextDirection.ltr,
-                      children: <Widget>[
-                        Text(
-                          nickName,
-                          style: const TextStyle(
-                            fontSize: 17.0,
-                            fontWeight: FontWeight.w600,
-                            color: CupertinoColors.systemGrey3,
-                          ),
-                        ),
-                        const Icon(
-                          CupertinoIcons.chevron_right,
-                          color: CupertinoColors.systemGrey3,
-                        )
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ),
+            // SizedBox(
+            //   //好友备注ListTile
+            //   //TODO：onTap修改好友备注
+            //   width: 340,
+            //   child: Container(
+            //     decoration: const BoxDecoration(
+            //         border: Border(
+            //             bottom: BorderSide(
+            //                 width: 1, color: CupertinoColors.systemGrey5))),
+            //     padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+            //     child: CupertinoListTile(
+            //       leadingToTitle: 0,
+            //       title: const Text(
+            //         "设置好友备注 ",
+            //         style: TextStyle(
+            //           fontSize: 18.0,
+            //           fontWeight: FontWeight.w500,
+            //         ),
+            //       ),
+            //       trailing: SizedBox(
+            //         width: 200,
+            //         child: Row(
+            //           mainAxisAlignment: MainAxisAlignment.end,
+            //           mainAxisSize: MainAxisSize.min,
+            //           crossAxisAlignment: CrossAxisAlignment.center,
+            //           textDirection: TextDirection.ltr,
+            //           children: <Widget>[
+            //             Text(
+            //               nickName,
+            //               style: const TextStyle(
+            //                 fontSize: 17.0,
+            //                 fontWeight: FontWeight.w600,
+            //                 color: CupertinoColors.systemGrey3,
+            //               ),
+            //             ),
+            //             const Icon(
+            //               CupertinoIcons.chevron_right,
+            //               color: CupertinoColors.systemGrey3,
+            //             )
+            //           ],
+            //         ),
+            //       ),
+            //     ),
+            //   ),
+            // ),
             SizedBox(
               //好友Moment的ListTile
               //TODO:onTap进入好友Moment
@@ -175,7 +175,7 @@ class ContactCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  trailing: ContactToTopSwitch(chatID: chatID,),
+                  trailing: ContactToTopSwitch(chattile: chattile,),
                 ),
               ),
             ),
@@ -240,8 +240,7 @@ class ContactCard extends StatelessWidget {
                         context,
                         CupertinoPageRoute(
                             builder: (context) => PrivateChat(
-                                  contactName: nickName,
-                                  chatID: chatID,
+                                  chattile: chattile,
                                 )));
                   },
                 ),

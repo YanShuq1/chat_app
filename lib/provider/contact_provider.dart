@@ -19,7 +19,7 @@ class ContactProvider with ChangeNotifier {
 
   Future<void> addContact(Contact contact) async {
     _contacts.add(contact);
-    await saveContactList(contact);
+    await saveContact(contact);
     notifyListeners(); // 通知监听者
   }
 
