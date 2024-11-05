@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      currentUserEmail = _emailController.text.trim();
+      currentUser.email = _emailController.text.trim();
       spLoadAndSaveContactEmailListFromDB();
       spLoadAndSaveContactListFromDB();
       spLoadAndSaveChatListFromDB();

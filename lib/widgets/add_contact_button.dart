@@ -23,20 +23,22 @@ class _AddContactButtonState extends State<AddContactButton> {
       if (!contactList.contains(widget.contact)) {
         var uuid = const Uuid();
         String chatRoomID = uuid.v1();
-        saveContactToDB(widget.contact.email); //自带双向添加好友
+        saveContactToDB(widget.contact); //自带双向添加好友
+        spSaveContact(widget.contact); //添加完后本地持久化
         chatList.add(Chattile(
             email: widget.contact.email,
             contactName: widget.contact.contactName,
             chatRoomID: chatRoomID,
             avatarUrl: widget.contact.avatarUrl));
-        saveChatListToDB();
+        saveChatListToDB(); //同步数据库
+        spSaveChatList(); //本地持久化
 
         //添加好友后发送问候消息
         await Supabase.instance.client.from('chatMessages').upsert({
-          'chat_room_id':chatRoomID,
-          'sender':currentUserEmail,
-          'message':"Hellooooo! Let's chat now!",
-          'send_time':DateTime.now().toIso8601String(),
+          'chat_room_id': chatRoomID,
+          'sender': currentUser.email,
+          'message': "Hellooooo! Let's chat now!",
+          'send_time': DateTime.now().toIso8601String(),
         });
       }
       // 更新状态

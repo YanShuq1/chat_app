@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:chat_app/model/chattile.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -13,6 +12,8 @@ class Contact {
       required this.email,
       required this.avatarUrl});
 }
+
+late Contact currentUser;
 
 extension ContactJson on Contact {
   //在chatpage中的格式转换逻辑
@@ -47,9 +48,9 @@ Future<void> spSaveContact(Contact person) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     List<String> saveList =
         contactList.map((contact) => json.encode(contact.toJson())).toList();
-    await prefs.setStringList('contactList/$currentUserEmail', saveList);
+    await prefs.setStringList('contactList/${currentUser.email}', saveList);
     await prefs.setStringList(
-        'contactEmailList/$currentUserEmail', contactEmailList);
+        'contactEmailList/${currentUser.email}', contactEmailList);
   }
 }
 
@@ -69,13 +70,14 @@ Future<void> spLoadAndSaveContactListFromDB() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   List<String> saveList =
       contactList.map((contact) => json.encode(contact.toJson())).toList();
-  await prefs.setStringList('contactList/$currentUserEmail', saveList);
+  await prefs.setStringList('contactList/${currentUser.email}', saveList);
 }
 
 //本地加载联系人列表
 Future<List<Contact>> spLoadContactList() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  List<String>? jsonList = prefs.getStringList('contactList/$currentUserEmail');
+  List<String>? jsonList =
+      prefs.getStringList('contactList/${currentUser.email}');
   if (jsonList == null) {
     return [];
   }
@@ -87,7 +89,7 @@ Future<List<Contact>> spLoadContactList() async {
 //本地加载联系人邮箱列表
 Future<List<String>> spLoadContactEmailList() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  return prefs.getStringList('contactEmailList/$currentUserEmail') ?? [];
+  return prefs.getStringList('contactEmailList/${currentUser.email}') ?? [];
 }
 
 //本地保存从网络上扒取的联系人邮箱列表
@@ -95,31 +97,30 @@ Future<void> spLoadAndSaveContactEmailListFromDB() async {
   final dbResponse = await Supabase.instance.client
       .from('contacts')
       .select()
-      .eq('user_email', currentUserEmail)
+      .eq('user_email', currentUser.email)
       .single();
   contactEmailList = List<String>.from(dbResponse['contacts_email']);
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setStringList(
-      'contactEmailList/$currentUserEmail', contactEmailList);
+      'contactEmailList/${currentUser.email}', contactEmailList);
 }
 
-Future<void> saveContactToDB(String email) async {
-  contactEmailList.add(email);
+Future<void> saveContactToDB(Contact contact) async {
   try {
     await Supabase.instance.client.from('contacts').upsert({
-      'user_email': currentUserEmail,
+      'user_email': currentUser.email,
       'contacts_email': contactEmailList,
     });
     //双向添加好友
     final dbResponse = await Supabase.instance.client
         .from('contacts')
         .select()
-        .eq('user_email', email)
+        .eq('user_email', contact.email)
         .single();
-    List<String> tempList = dbResponse['contact_email']??[];
-    tempList.add(currentUserEmail);
+    List<String> tempList = dbResponse['contact_email'] ?? [];
+    tempList.add(currentUser.email);
     await Supabase.instance.client.from('contacts').upsert({
-      'user_email': email,
+      'user_email': contact.email,
       'contacts_email': tempList,
     });
   } catch (e) {

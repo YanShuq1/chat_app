@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:chat_app/model/contact.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -33,15 +34,13 @@ extension ChattileJson on Chattile {
   }
 }
 
-late String currentUserEmail;
-
 //聊天栏列表
 List<Chattile> chatList = [];
 
 //本地加载ChatList
 Future<List<Chattile>> spLoadChatList() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  List<String>? jsonList = prefs.getStringList('chatList/$currentUserEmail');
+  List<String>? jsonList = prefs.getStringList('chatList/${currentUser.email}');
   return jsonList
           ?.map((json) => ChattileJson.fromJson(jsonDecode(json)))
           .toList() ??
@@ -49,14 +48,11 @@ Future<List<Chattile>> spLoadChatList() async {
 }
 
 //本地保持ChatList
-Future<void> spSaveChatList(Chattile tile) async {
-  if (!chatList.contains(tile)) {
-    chatList.add(tile);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> saveList =
-        chatList.map((chat) => json.encode(chat.toJson())).toList();
-    await prefs.setStringList('chatList/$currentUserEmail', saveList);
-  }
+Future<void> spSaveChatList() async {
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> saveList =
+      chatList.map((chat) => json.encode(chat.toJson())).toList();
+  await prefs.setStringList('chatList/${currentUser.email}', saveList);
 }
 
 //本地保持从网络上扒取的ChatList
@@ -65,15 +61,15 @@ Future<void> spLoadAndSaveChatListFromDB() async {
   final dbResponse = await Supabase.instance.client
       .from('chatRooms')
       .select()
-      .contains('chat_user_email', [currentUserEmail]);
-  print('dbResponse:$dbResponse');
+      .contains('chat_user_email', [currentUser.email]);
+  // print('dbResponse:$dbResponse');
   for (var room in dbResponse) {
     String chatRoomID = room['chat_room_id'];
     List<dynamic> userEmails = room['chat_user_email'];
 
     // 过滤掉 currentUserEmail，保留对方的 email
     String? otherUserEmail = userEmails.firstWhere(
-      (email) => email != currentUserEmail,
+      (email) => email != currentUser.email,
     );
 
     if (otherUserEmail != null) {
@@ -97,7 +93,7 @@ Future<void> spLoadAndSaveChatListFromDB() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   List<String> saveList =
       chatList.map((chat) => json.encode(chat.toJson())).toList();
-  await prefs.setStringList('chatList/$currentUserEmail', saveList);
+  await prefs.setStringList('chatList/${currentUser.email}', saveList);
 }
 
 //数据库上保存聊天室信息
@@ -106,7 +102,7 @@ Future<void> saveChatListToDB() async {
     for (var i in chatList) {
       await Supabase.instance.client.from('chatRooms').upsert({
         'chat_room_id': i.chatRoomID,
-        'chat_user_email': [currentUserEmail, i.email],
+        'chat_user_email': [currentUser.email, i.email],
       });
     }
   }

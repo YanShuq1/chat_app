@@ -32,7 +32,7 @@ Future<void> main() async {
   final b = Hive.box<StoryModel>('stories');
   await b.clear();
   // 打印盒子中的项目数量
-  print('Number of shots: ${box.length}');
+  // print('Number of shots: ${box.length}');
 
   runApp(
     MultiProvider(

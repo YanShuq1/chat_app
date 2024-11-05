@@ -76,7 +76,7 @@ class _MyChatPageState extends State<MyChatPage> {
                 );
               },
               child: CupertinoListTile(
-                leading: const Icon(CupertinoIcons.person),
+                leading: Image.network(chatList[index].avatarUrl),
                 title: Text(chatList[index].contactName),
                 subtitle:
                     const Text("最近消息...", style: TextStyle(fontSize: 10.0)),

@@ -14,6 +14,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _passwordController = TextEditingController();
   String? _errorMessage;
 
+  //TODO:注册时获取头像和用户名
   //final _avatarPicker = ImagePicker(); //头像获取
 
   Future<void> _register() async {
