@@ -1,3 +1,4 @@
 {
-    "cmake.sourceDirectory": "/Users/yjj/VSCodeWorkspace/FlutterProject/chat_app/linux"
+    "cmake.sourceDirectory": "/Users/yjj/VSCodeWorkspace/FlutterProject/chat_app/linux",
+    "java.configuration.updateBuildConfiguration": "interactive"
 }

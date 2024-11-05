@@ -1,3 +1,23 @@
+buildscript {
+    ext.kotlin_version = '1.9.24' // 确保使用最新版本
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:8.0.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24" // 使用最新的 Kotlin 版本
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+
 allprojects {
     repositories {
         google()

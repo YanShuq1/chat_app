@@ -65,7 +65,7 @@ class _AddContactPageState extends State<AddContactPage> {
             CupertinoListTile(
               leading: user!['avatar_url'] != null
                   ? Image.network(user!['avatar_url'], width: 20, height: 20)
-                  : Icon(CupertinoIcons.person),
+                  : const Icon(CupertinoIcons.person),
               title: Text(user!['user_name'], style: const TextStyle(fontSize: 13)),
               subtitle: Text(user!['email'], style: const TextStyle(fontSize: 10)),
               trailing: AddContactButton(

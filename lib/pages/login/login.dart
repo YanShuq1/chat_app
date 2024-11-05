@@ -24,9 +24,9 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
       currentUserEmail = _emailController.text.trim();
-      //TODO:从数据库上扒取联系人聊天室信息
-      loadChatList();
-      loadContactList();
+      spLoadAndSaveContactEmailListFromDB();
+      spLoadAndSaveContactListFromDB();
+      spLoadAndSaveChatListFromDB();
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => const MyHomePage()));
     } catch (e) {

@@ -34,8 +34,14 @@ class _RegisterPageState extends State<RegisterPage> {
         await Supabase.instance.client.from('profiles').insert({
           'user_id': userId,
           'email': email,
-          'avatar_url': 'avatar\'s url', // 这里可以替换为实际的头像URL
-          'user_name': 'name here',
+          'avatar_url':
+              'https://cjvsombxqljpbexdpuvy.supabase.co/storage/v1/object/public/user_avatar/default_avatar/default_avatar.jpeg', // 默认头像Storage的URL
+          'user_name': 'Unname User',
+        });
+
+        await Supabase.instance.client.from('contacts').upsert({
+          'user_email': email,
+          'contacts_email': [],
         });
       }
     } catch (e) {

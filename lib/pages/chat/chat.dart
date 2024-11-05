@@ -1,8 +1,9 @@
 import 'package:chat_app/model/chattile.dart';
-import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
+import 'package:chat_app/provider/contact_provider.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 
 class MyChatPage extends StatefulWidget {
   const MyChatPage({super.key});
@@ -17,28 +18,21 @@ class _MyChatPageState extends State<MyChatPage> {
   @override
   void initState() {
     super.initState();
-    loadChatList().then((loadedChatList) {
-      setState(() {
-        chatList = loadedChatList;
-      });
-    });
-    loadContactEmailList().then((loadedEmails) {
-      setState(() {
-        contactEmailList = loadedEmails;
-      });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ContactProvider>(context, listen: false).freshContact();
     });
   }
 
   void _onChatChanged() {
-    loadChatList().then((updatedChatList) {
-      setState(() {
-        chatList = updatedChatList;
-      });
+    setState(() {
+      spLoadAndSaveChatListFromDB();
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    
+    print('chatList:$chatList');
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         trailing: ContactsManageGestureDetector(
@@ -61,7 +55,9 @@ class _MyChatPageState extends State<MyChatPage> {
                       title: const Text("确定删除对话？"),
                       actions: [
                         CupertinoDialogAction(
-                          child: const Text("确定", style: TextStyle(color: CupertinoColors.systemRed)),
+                          child: const Text("确定",
+                              style:
+                                  TextStyle(color: CupertinoColors.systemRed)),
                           onPressed: () {
                             chatList.removeAt(index);
                             _onChatChanged();
@@ -82,13 +78,17 @@ class _MyChatPageState extends State<MyChatPage> {
               child: CupertinoListTile(
                 leading: const Icon(CupertinoIcons.person),
                 title: Text(chatList[index].contactName),
-                subtitle: const Text("最近消息...", style: TextStyle(fontSize: 10.0)),
-                trailing: Text("8:${index.toString().padLeft(2, '0')}", style: const TextStyle(color: CupertinoColors.systemGrey2, fontSize: 10.0)),
+                subtitle:
+                    const Text("最近消息...", style: TextStyle(fontSize: 10.0)),
+                trailing: Text("8:${index.toString().padLeft(2, '0')}",
+                    style: const TextStyle(
+                        color: CupertinoColors.systemGrey2, fontSize: 10.0)),
                 onTap: () {
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
-                      builder: (context) => PrivateChat(chattile: chatList[index]),
+                      builder: (context) =>
+                          PrivateChat(chattile: chatList[index]),
                     ),
                   );
                 },

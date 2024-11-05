@@ -36,9 +36,9 @@ class _PrivateChatState extends State<PrivateChat> {
 
   Future<void> _fetchMessages() async {
     final response = await Supabase.instance.client
-        .from('messages')
+        .from('chatMessages')
         .select()
-        .eq('chat_id', widget.chattile.chatRoomID)
+        .eq('chat_room_id', widget.chattile.chatRoomID)
         .order('send_time', ascending: false);
 
     final gotContact = await Supabase.instance.client
@@ -104,7 +104,7 @@ class _PrivateChatState extends State<PrivateChat> {
                 ),
                 CupertinoButton(
                   onPressed: _sendMessage,
-                  child: Icon(CupertinoIcons.arrow_up_circle_fill),
+                  child: const Icon(CupertinoIcons.arrow_up_circle_fill),
                 ),
               ],
             ),

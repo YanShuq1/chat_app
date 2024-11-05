@@ -20,58 +20,25 @@ class _AddContactButtonState extends State<AddContactButton> {
 
   void _toggleAdd() async {
     try {
-      var uuid = const Uuid();
-      String chatRoomID = uuid.v1();
+      if (!contactList.contains(widget.contact)) {
+        var uuid = const Uuid();
+        String chatRoomID = uuid.v1();
+        saveContactToDB(widget.contact.email); //自带双向添加好友
+        chatList.add(Chattile(
+            email: widget.contact.email,
+            contactName: widget.contact.contactName,
+            chatRoomID: chatRoomID,
+            avatarUrl: widget.contact.avatarUrl));
+        saveChatListToDB();
 
-      await Supabase.instance.client.from('chatRooms').upsert({
-        'chat_user_email': [currentUserEmail, widget.contact.email],
-        'chat_room_id': chatRoomID,
-      });
-      // Save the contact locally
-      saveContact(widget.contact);
-      saveChatList(Chattile(
-        contactName: widget.contact.contactName,
-        email: widget.contact.email,
-        chatRoomID: chatRoomID,
-        avatarUrl: widget.contact.avatarUrl,
-      ));
-
-      // 添加当前用户的联系人信息
-      final myResponse = await Supabase.instance.client
-          .from('contacts')
-          .select()
-          .eq('user_email', currentUserEmail)
-          .single();
-
-      // 获取当前用户的联系人列表
-      List<dynamic> myContacts = myResponse['contacts_email'] ?? [];
-      if (!myContacts.contains(widget.contact.email)) {
-        myContacts.add(widget.contact.email);
+        //添加好友后发送问候消息
+        await Supabase.instance.client.from('chatMessages').upsert({
+          'chat_room_id':chatRoomID,
+          'sender':currentUserEmail,
+          'message':"Hellooooo! Let's chat now!",
+          'send_time':DateTime.now().toIso8601String(),
+        });
       }
-
-      await Supabase.instance.client.from('contacts').upsert({
-        'user_email': currentUserEmail,
-        'contacts_email': myContacts,
-      });
-
-      // 双向添加好友
-      final contactResponse = await Supabase.instance.client
-          .from('contacts')
-          .select()
-          .eq('user_email', widget.contact.email)
-          .single();
-
-      // 获取对方的联系人列表
-      List<dynamic> contactEmails = contactResponse['contacts_email'] ?? [];
-      if (!contactEmails.contains(currentUserEmail)) {
-        contactEmails.add(currentUserEmail);
-      }
-
-      await Supabase.instance.client.from('contacts').upsert({
-        'user_email': widget.contact.email,
-        'contacts_email': contactEmails,
-      });
-
       // 更新状态
       setState(() {
         _isAdded = true;

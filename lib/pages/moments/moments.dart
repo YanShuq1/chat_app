@@ -25,15 +25,15 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
         child: Stack(
           children: [
             // 背景内容可以滚动
-            Positioned.fill(
+            const Positioned.fill(
               top: 60, // 给搜索框留出空间
               child: SingleChildScrollView(
-                padding: const EdgeInsets.only(top: 0),
+                padding: EdgeInsets.only(top: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Shot Section
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.symmetric(horizontal: 16.0),
                       child: Text(
                         'Shot',
@@ -43,13 +43,13 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
                         ),
                       ),
                     ),
-                    const SizedBox(
+                    SizedBox(
                       height: 120, // Shot图片的高度
                       child: Shot(), // 使用 Shot Widget
                     ),
 
                     // Story Section
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
                         'Story',
@@ -59,7 +59,7 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
                         ),
                       ),
                     ),
-                    const Story(), // 使用 Story Widget
+                    Story(), // 使用 Story Widget
                   ],
                 ),
               ),
@@ -80,7 +80,7 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
             ),
 
             // 可展开的浮动按钮
-            Positioned(
+            const Positioned(
               bottom: 16,
               right: 16,
               child: ExpandableFab(),
