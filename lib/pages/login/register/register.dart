@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 // import 'package:image_picker/image_picker.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -63,17 +64,64 @@ class _RegisterPageState extends State<RegisterPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            CupertinoTextField(
-              controller: _emailController,
-              placeholder: '邮箱',
+            // 邮箱输入框
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: CupertinoColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: CupertinoTextField(
+                  controller: _emailController,
+                  placeholder: '邮箱',
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 16),
-            CupertinoTextField(
-              controller: _passwordController,
-              placeholder: '密码',
-              obscureText: true,
+            // 密码输入框
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: CupertinoColors.white,
+                  borderRadius: BorderRadius.circular(10),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      spreadRadius: 1,
+                      blurRadius: 5,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                child: CupertinoTextField(
+                  controller: _passwordController,
+                  placeholder: '密码',
+                  obscureText: true,
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
             ),
-            const SizedBox(height: 16),
+            const SizedBox(height: 20),
+            // 注册按钮
             CupertinoButton.filled(
               onPressed: _register,
               child: const Text('注册'),
@@ -81,8 +129,10 @@ class _RegisterPageState extends State<RegisterPage> {
             if (_errorMessage != null)
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(_errorMessage!,
-                    style: const TextStyle(color: CupertinoColors.systemRed)),
+                child: Text(
+                  _errorMessage!,
+                  style: const TextStyle(color: CupertinoColors.systemRed),
+                ),
               ),
           ],
         ),
