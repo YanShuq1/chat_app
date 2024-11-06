@@ -13,7 +13,11 @@ class Contact {
       required this.avatarUrl});
 }
 
-late Contact currentUser;
+Contact currentUser = Contact(
+    email: '',
+    contactName: 'Unnamed User',
+    avatarUrl:
+        'https://cjvsombxqljpbexdpuvy.supabase.co/storage/v1/object/public/user_avatar/default_avatar/default_avatar.jpeg');
 
 extension ContactJson on Contact {
   //在chatpage中的格式转换逻辑
@@ -45,13 +49,13 @@ Future<void> spSaveContact(Contact person) async {
       contactEmailList.contains(person.email))) {
     contactList.add(person);
     contactEmailList.add(person.email);
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    List<String> saveList =
-        contactList.map((contact) => json.encode(contact.toJson())).toList();
-    await prefs.setStringList('contactList/${currentUser.email}', saveList);
-    await prefs.setStringList(
-        'contactEmailList/${currentUser.email}', contactEmailList);
   }
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  List<String> saveList =
+      contactList.map((contact) => json.encode(contact.toJson())).toList();
+  await prefs.setStringList('contactList/${currentUser.email}', saveList);
+  await prefs.setStringList(
+      'contactEmailList/${currentUser.email}', contactEmailList);
 }
 
 //保存从网络上扒取的联系人列表，要先执行spSaveContactEmailListFromDB()
@@ -107,16 +111,19 @@ Future<void> spLoadAndSaveContactEmailListFromDB() async {
 
 Future<void> saveContactToDB(Contact contact) async {
   try {
+    contactEmailList.add(contact.email);
     await Supabase.instance.client.from('contacts').upsert({
       'user_email': currentUser.email,
       'contacts_email': contactEmailList,
     });
+    contactList.add(contact);
     //双向添加好友
     final dbResponse = await Supabase.instance.client
         .from('contacts')
         .select()
         .eq('user_email', contact.email)
         .single();
+    print(dbResponse);
     List<String> tempList = dbResponse['contact_email'] ?? [];
     tempList.add(currentUser.email);
     await Supabase.instance.client.from('contacts').upsert({

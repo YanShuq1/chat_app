@@ -30,6 +30,7 @@ class _LoginPageState extends State<LoginPage> {
         password: _passwordController.text.trim(),
       );
       currentUser.email = _emailController.text.trim();
+      //从数据库同步信息并本地保存
       spLoadAndSaveContactEmailListFromDB();
       spLoadAndSaveContactListFromDB();
       spLoadAndSaveChatListFromDB();

@@ -62,7 +62,7 @@ Future<void> spLoadAndSaveChatListFromDB() async {
       .from('chatRooms')
       .select()
       .contains('chat_user_email', [currentUser.email]);
-  // print('dbResponse:$dbResponse');
+   print('dbResponse:$dbResponse');
   for (var room in dbResponse) {
     String chatRoomID = room['chat_room_id'];
     List<dynamic> userEmails = room['chat_user_email'];
@@ -99,11 +99,18 @@ Future<void> spLoadAndSaveChatListFromDB() async {
 //数据库上保存聊天室信息
 Future<void> saveChatListToDB() async {
   if (chatList.isNotEmpty) {
+    // 使用 Future 列表存储每个异步请求
+    List<Future> futures = [];
+
     for (var i in chatList) {
-      await Supabase.instance.client.from('chatRooms').upsert({
+      futures.add(Supabase.instance.client.from('chatRooms').upsert({
         'chat_room_id': i.chatRoomID,
         'chat_user_email': [currentUser.email, i.email],
-      });
+      }));
     }
+
+    // 等待所有请求完成
+    await Future.wait(futures);
   }
 }
+

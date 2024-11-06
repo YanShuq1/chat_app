@@ -1,5 +1,7 @@
+import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
+import 'package:chat_app/provider/chat_provider.dart';
 import 'package:chat_app/provider/contact_provider.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
@@ -18,6 +20,8 @@ class _MyChatPageState extends State<MyChatPage> {
   @override
   void initState() {
     super.initState();
+    spLoadAndSaveChatListFromDB();
+    spLoadAndSaveLatestMessageListFromDB();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<ContactProvider>(context, listen: false).freshContact();
     });
@@ -31,12 +35,14 @@ class _MyChatPageState extends State<MyChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    
     print('chatList:$chatList');
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         trailing: ContactsManageGestureDetector(
-          onAdded: _onChatChanged,
+          onAdded: () {
+            // 添加联系人时，刷新聊天列表
+            Provider.of<ChatProvider>(context, listen: false).loadChatList();
+          },
         ),
         middle: const Text("Chat"),
       ),
@@ -78,11 +84,19 @@ class _MyChatPageState extends State<MyChatPage> {
               child: CupertinoListTile(
                 leading: Image.network(chatList[index].avatarUrl),
                 title: Text(chatList[index].contactName),
-                subtitle:
-                    const Text("最近消息...", style: TextStyle(fontSize: 10.0)),
-                trailing: Text("8:${index.toString().padLeft(2, '0')}",
-                    style: const TextStyle(
-                        color: CupertinoColors.systemGrey2, fontSize: 10.0)),
+                subtitle: Text(
+                  latestMessageList[chatList[index].chatRoomID]
+                          ?['latestMessage'] ??
+                      'No messages',
+                  style: TextStyle(fontSize: 10.0),
+                ),
+                trailing: Text(
+                  latestMessageList[chatList[index].chatRoomID]
+                          ?['latestMessageSendTime'] ??
+                      'N/A',
+                  style: const TextStyle(
+                      color: CupertinoColors.systemGrey2, fontSize: 10.0),
+                ),
                 onTap: () {
                   Navigator.push(
                     context,

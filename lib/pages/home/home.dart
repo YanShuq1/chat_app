@@ -46,28 +46,28 @@ class _MyHomePageState extends State<MyHomePage> {
             case 0:
               returnView = CupertinoTabView(
                 builder: (context) {
-                  return const MyMomentsPage();
+                  return const SafeArea(child: MyMomentsPage());
                 },
               );
               break;
             case 1:
               returnView = CupertinoTabView(
                 builder: (context) {
-                  return const MyChatPage();
+                  return const SafeArea( child: MyChatPage());
                 },
               );
               break;
             case 2:
               returnView = CupertinoTabView(
                 builder: (context) {
-                  return const MyContactsPage();
+                  return const SafeArea(child: MyContactsPage(),);
                 },
               );
               break;
             case 3:
               returnView = CupertinoTabView(
                 builder: (context) {
-                  return const MyCardPage();
+                  return const SafeArea(child: MyCardPage(),);
                 },
               );
               break;

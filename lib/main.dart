@@ -1,6 +1,7 @@
 import 'package:chat_app/model/shot_model.dart';
 import 'package:chat_app/model/story_model.dart';
 import 'package:chat_app/pages/login/login.dart';
+import 'package:chat_app/provider/chat_provider.dart';
 import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:hive_flutter/adapters.dart';
@@ -39,6 +40,8 @@ Future<void> main() async {
       providers: [
         ChangeNotifierProvider(
             create: (_) => ContactProvider()), // 添加 ContactProvider
+                    ChangeNotifierProvider(
+            create: (_) => ChatProvider()), // 添加 ChatProvider
       ],
       child: const MyApp(), // 启动应用
     ),

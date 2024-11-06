@@ -1,4 +1,6 @@
 import 'package:chat_app/model/chattile.dart';
+import 'package:chat_app/model/contact.dart';
+import 'package:chat_app/pages/chat/contact_card/contact_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -12,105 +14,219 @@ class PrivateChat extends StatefulWidget {
 
 class _PrivateChatState extends State<PrivateChat> {
   final _messageController = TextEditingController();
-  List<Map<String, dynamic>> _messages = [];
 
-  //数据更新
-  late String contactAvatarUrl; //获取好友的头像的url
-  late String contactName;
-
-  Future<void> _sendMessage() async {
+  Future<void> _sendMessage(DateTime sendTime) async {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
 
-    //TODO:实现聊天室信息的上传与下载
     await Supabase.instance.client.from('chatMessages').insert({
       'chat_room_id': widget.chattile.chatRoomID,
       'message': message,
-      'sender': Supabase.instance.client.auth.currentUser?.id,
-      'send_time': DateTime.now().toIso8601String(),
+      'sender': currentUser.email,
+      'send_time': sendTime.toIso8601String(),
     });
 
-    _messageController.clear();
-    _fetchMessages();
-  }
-
-  Future<void> _fetchMessages() async {
-    final response = await Supabase.instance.client
+    final messageList = await Supabase.instance.client
         .from('chatMessages')
         .select()
         .eq('chat_room_id', widget.chattile.chatRoomID)
         .order('send_time', ascending: false);
 
-    final gotContact = await Supabase.instance.client
-        .from('profiles')
-        .select()
-        .eq('email', widget.chattile.email)
-        .single();
-    contactAvatarUrl = gotContact['avatar_url'];
-    contactName = gotContact['user_name'];
+    String messageID = messageList.first['chat_message_id'];
 
-    // 检查 response 是否为空来判断查询是否成功
-    setState(() {
-      _messages = List<Map<String, dynamic>>.from(response);
-      widget.chattile.avatarUrl = contactAvatarUrl;
-      widget.chattile.contactName = contactName;
-    });
-  }
+    print(messageID);
 
-  @override
-  void initState() {
-    super.initState();
-    _fetchMessages();
+    await Supabase.instance.client
+        .from('chatRooms')
+        .update({'latest_message_id': messageID}).eq(
+            'chat_room_id', widget.chattile.chatRoomID);
+
+
+    _messageController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: CupertinoNavigationBar(
-        middle: Text(widget.chattile.contactName),
-      ),
-      child: Column(
-        children: [
-          Expanded(
-            child: ListView.builder(
-              reverse: true,
-              itemCount: _messages.length,
-              itemBuilder: (context, index) {
-                final message = _messages[index];
-                return Padding(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: CupertinoColors.lightBackgroundGray,
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(message['message']),
-                  ),
-                );
-              },
-            ),
+    final _messageStream = Supabase.instance.client
+        .from('chatMessages')
+        .stream(primaryKey: ['chat_message_id'])
+        .eq('chat_room_id', widget.chattile.chatRoomID)
+        .order('send_time', ascending: false);
+
+    return StreamBuilder(
+      stream: _messageStream,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const CupertinoActivityIndicator();
+        }
+        if (!snapshot.hasData) {
+          return const Center(child: Text('加载联系人信息失败'));
+        }
+
+        final contactAvatarUrl = widget.chattile.avatarUrl;
+        final contactName = widget.chattile.contactName;
+
+        return CupertinoPageScaffold(
+          navigationBar: CupertinoNavigationBar(
+            middle: Text(contactName),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
+          child: SafeArea(
+            child: Column(
               children: [
                 Expanded(
-                  child: CupertinoTextField(
-                    controller: _messageController,
-                    placeholder: '输入消息',
+                  child: StreamBuilder<List<Map<String, dynamic>>>(
+                    stream: _messageStream,
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(
+                            child: CupertinoActivityIndicator());
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('暂无消息'));
+                      }
+
+                      final messages = snapshot.data!;
+
+                      return ListView.builder(
+                        reverse: true,
+                        itemCount: messages.length,
+                        itemBuilder: (context, index) {
+                          final message = messages[index];
+                          final isCurrentUser =
+                              message['sender'] == currentUser.email;
+                          final sendTime = DateTime.parse(message['send_time']);
+                          final formattedTime =
+                              sendTime.toLocal().toString().substring(0, 19);
+
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 4, horizontal: 8),
+                            child: Align(
+                              alignment: isCurrentUser
+                                  ? Alignment.centerRight
+                                  : Alignment.centerLeft,
+                              child: Column(
+                                crossAxisAlignment: isCurrentUser
+                                    ? CrossAxisAlignment.end
+                                    : CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    mainAxisAlignment: isCurrentUser
+                                        ? MainAxisAlignment.end
+                                        : MainAxisAlignment.start,
+                                    children: [
+                                      if (!isCurrentUser) ...[
+                                        // 对方的头像
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: CupertinoColors.systemGrey,
+                                              width: 0.8,
+                                            ),
+                                          ),
+                                          child: ClipOval(
+                                            child: Image.network(
+                                              contactAvatarUrl,
+                                              width: 30, // 头像大小
+                                              height: 30,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        const SizedBox(width: 8),
+                                      ],
+                                      // 消息气泡
+                                      Container(
+                                        padding: const EdgeInsets.all(12),
+                                        constraints: BoxConstraints(
+                                          maxWidth: 250, // 限制气泡的最大宽度
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: CupertinoColors
+                                              .lightBackgroundGray,
+                                          borderRadius:
+                                              BorderRadius.circular(8),
+                                        ),
+                                        child: Text(
+                                          message['message'],
+                                          style: TextStyle(
+                                            fontSize: 16,
+                                          ),
+                                        ),
+                                      ),
+                                      if (isCurrentUser) ...[
+                                        const SizedBox(width: 8),
+                                        // 当前用户的头像
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            border: Border.all(
+                                              color: CupertinoColors.systemGrey,
+                                              width: 0.8,
+                                            ),
+                                          ),
+                                          child: ClipOval(
+                                            child: Image.network(
+                                              currentUser.avatarUrl,
+                                              width: 30, // 头像大小
+                                              height: 30,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 4), // 间距
+                                  // 显示时间
+                                  Padding(
+                                    padding:
+                                        const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                                    child: Text(
+                                      formattedTime,
+                                      style: TextStyle(
+                                        color: CupertinoColors.inactiveGray,
+                                        fontStyle: FontStyle.italic,
+                                        fontSize: 10,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
-                CupertinoButton(
-                  onPressed: _sendMessage,
-                  child: const Icon(CupertinoIcons.arrow_up_circle_fill),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: CupertinoTextField(
+                          controller: _messageController,
+                          placeholder: '输入消息',
+                        ),
+                      ),
+                      CupertinoButton(
+                        onPressed: () {
+                          DateTime sendTime = DateTime.now();
+                          _sendMessage(sendTime);
+                        },
+                        child: const Icon(CupertinoIcons.arrow_up_circle_fill),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }

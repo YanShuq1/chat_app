@@ -1,6 +1,8 @@
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
+import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -18,6 +20,14 @@ class AddContactButton extends StatefulWidget {
 class _AddContactButtonState extends State<AddContactButton> {
   bool _isAdded = false;
 
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<ContactProvider>(context, listen: false).freshContact();
+    });
+  }
+
   void _toggleAdd() async {
     try {
       if (!contactList.contains(widget.contact)) {
@@ -30,6 +40,12 @@ class _AddContactButtonState extends State<AddContactButton> {
             contactName: widget.contact.contactName,
             chatRoomID: chatRoomID,
             avatarUrl: widget.contact.avatarUrl));
+        //数据库中添加chatRoom
+        await Supabase.instance.client.from('chatRooms').upsert({
+          'chat_room_id': chatRoomID,
+          'chat_user_email': [currentUser.email, widget.contact.email]
+        });
+
         saveChatListToDB(); //同步数据库
         spSaveChatList(); //本地持久化
 
