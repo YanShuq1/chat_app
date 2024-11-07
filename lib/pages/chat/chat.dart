@@ -33,9 +33,7 @@ class _MyChatPageState extends State<MyChatPage> {
       // 数据变化时，更新状态
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
-      // print("监听更新最近消息:$latestMessageList");
       setState(() {});
-      // print("sub:$chatList,$latestMessageList");
     });
   }
 
@@ -47,7 +45,6 @@ class _MyChatPageState extends State<MyChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    // print("builld:$chatList,$latestMessageList");
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         trailing: ContactsManageGestureDetector(

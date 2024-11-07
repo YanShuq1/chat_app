@@ -32,15 +32,7 @@ class _LoginPageState extends State<LoginPage> {
       );
       currentUser.email = _emailController.text.trim();
 
-      //同步登录用户
-      final loginResponse = await Supabase.instance.client
-          .from('profiles')
-          .select()
-          .eq('email', currentUser.email)
-          .single();
-      // print(loginResponse);
-      currentUser.avatarUrl = loginResponse['avatar_url'];
-      currentUser.contactName = loginResponse['user_name'];
+      loadCurrentUser();
       //从数据库同步信息并本地保存
       await spLoadAndSaveContactEmailListFromDB();
       await spLoadAndSaveContactListFromDB();

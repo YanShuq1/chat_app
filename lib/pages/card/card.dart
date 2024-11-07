@@ -56,9 +56,9 @@ class Avatar extends StatelessWidget {
         ),
         const SizedBox(height: 10), // 头像和个性签名之间的间距
         // 个性签名
-        const Text(
-          "山行野宿，孤身万里",
-          style: TextStyle(fontSize: 16, color: Colors.grey),
+        Text(
+          currentUser.contactName,
+          style: const TextStyle(fontSize: 16, color: Colors.grey),
         ),
         const SizedBox(height: 10),
       ],

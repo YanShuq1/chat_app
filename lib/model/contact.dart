@@ -19,6 +19,17 @@ Contact currentUser = Contact(
     avatarUrl:
         'https://cjvsombxqljpbexdpuvy.supabase.co/storage/v1/object/public/user_avatar/default_avatar/default_avatar.jpeg');
 
+Future<void> loadCurrentUser() async {
+  //同步登录用户
+  final loginResponse = await Supabase.instance.client
+      .from('profiles')
+      .select()
+      .eq('email', currentUser.email)
+      .single();
+  currentUser.avatarUrl = loginResponse['avatar_url'];
+  currentUser.contactName = loginResponse['user_name'];
+}
+
 extension ContactJson on Contact {
   //在chatpage中的格式转换逻辑
   Map<String, dynamic> toJson() {
