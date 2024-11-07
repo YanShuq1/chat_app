@@ -44,14 +44,19 @@ Future<void> spLoadAndSaveLatestMessageListFromDB() async {
         .single();
 
     String message = messageResponse['message'];
-    String sendTime = DateTime.parse(messageResponse['send_time']).toLocal().toString().substring(0, 19);
+    String sendTime = DateTime.parse(messageResponse['send_time'])
+        .toLocal()
+        .toString()
+        .substring(0, 19);
 
     // 保存最新消息及其发送时间到 latestMessageList
     latestMessageList[chatRoomID] = {
       'latestMessage': message,
       'latestMessageSendTime': sendTime,
     };
-    }
+  }
+
+
 
   // 将获取的最新消息列表保存到本地 SharedPreferences
   await _saveLatestMessageListToLocal();
@@ -64,20 +69,22 @@ Future<void> _saveLatestMessageListToLocal() async {
   // 将 latestMessageList 转换为字符串并保存
   Map<String, String> stringMap = {};
   latestMessageList.forEach((key, value) {
-    stringMap[key] = '${value['latestMessage']},${value['latestMessageSendTime']}';
+    stringMap[key] =
+        '${value['latestMessage']},${value['latestMessageSendTime']}';
   });
 
   // 保存至 SharedPreferences
-  await prefs.setString('latestMessageList/${currentUser.email}', stringMap.toString());
+  await prefs.setString(
+      'latestMessageList/${currentUser.email}', stringMap.toString());
 }
 
 // 从 SharedPreferences 中加载本地存储的最新消息列表
 Future<void> _loadLatestMessageListFromLocal() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  
+
   // 获取保存的字符串
   String? savedData = prefs.getString('latestMessageList/${currentUser.email}');
-  
+
   if (savedData != null) {
     // 将字符串转换回 Map 并解析
     Map<String, String> loadedData = Map.from(jsonDecode(savedData));

@@ -1,3 +1,4 @@
+import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/contact_card/contact_card.dart';
@@ -41,6 +42,10 @@ class _PrivateChatState extends State<PrivateChat> {
         .update({'latest_message_id': messageID}).eq(
             'chat_room_id', widget.chattile.chatRoomID);
 
+    await spLoadAndSaveLatestMessageListFromDB();
+
+      print("私聊更新最近消息:$latestMessageList");
+
     _messageController.clear();
   }
 
@@ -83,7 +88,8 @@ class _PrivateChatState extends State<PrivateChat> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CupertinoActivityIndicator());
                   }
-                  if (!snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                  if (!snapshot.hasData &&
+                      snapshot.connectionState == ConnectionState.done) {
                     return const Center(child: Text('暂无消息'));
                   }
 

@@ -32,10 +32,10 @@ class _LoginPageState extends State<LoginPage> {
       );
       currentUser.email = _emailController.text.trim();
       //从数据库同步信息并本地保存
-      spLoadAndSaveContactEmailListFromDB();
-      spLoadAndSaveContactListFromDB();
-      spLoadAndSaveChatListFromDB();
-      spLoadAndSaveLatestMessageListFromDB();
+      await spLoadAndSaveContactEmailListFromDB();
+      await spLoadAndSaveContactListFromDB();
+      await spLoadAndSaveChatListFromDB();
+      await spLoadAndSaveLatestMessageListFromDB();
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => const MyHomePage()));
     } catch (e) {

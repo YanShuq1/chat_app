@@ -31,13 +31,12 @@ class _MyChatPageState extends State<MyChatPage> {
     _streamSubscription = Supabase.instance.client
         .from('chatRooms')
         .stream(primaryKey: ['chat_room_id']) // 根据你的表结构选择合适的主键
-        .listen((List<Map<String, dynamic>> data) {
+        .listen((List<Map<String, dynamic>> data) async {
       // 数据变化时，更新状态
-      setState(() async {
-        await spLoadAndSaveChatListFromDB();
-        await spLoadAndSaveLatestMessageListFromDB();
-        print("subSet:$chatList,$latestMessageList");
-      });
+      await spLoadAndSaveChatListFromDB();
+      await spLoadAndSaveLatestMessageListFromDB();
+      print("监听更新最近消息:$latestMessageList");
+      setState(() {});
       print("sub:$chatList,$latestMessageList");
     });
   }
