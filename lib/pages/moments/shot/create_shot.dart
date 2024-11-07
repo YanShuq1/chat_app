@@ -38,10 +38,10 @@ class _CreateShotState extends State<CreateShot> {
       final box = Hive.box<ShotModel>('shots');
       await box.add(newShot);
 
-      print("Shot added successfully.");
+      // print("Shot added successfully.");
       Navigator.of(context).pop(); // 返回上一个页面
     } else {
-      print("No image selected");
+      // print("No image selected");
     }
   }
 

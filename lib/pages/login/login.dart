@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
           .select()
           .eq('email', currentUser.email)
           .single();
-      print(loginResponse);
+      // print(loginResponse);
       currentUser.avatarUrl = loginResponse['avatar_url'];
       currentUser.contactName = loginResponse['user_name'];
       //从数据库同步信息并本地保存

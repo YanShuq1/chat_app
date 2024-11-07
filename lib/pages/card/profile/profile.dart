@@ -116,6 +116,10 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
             CupertinoDialogAction(
               onPressed: () async {
+                await Supabase.instance.client
+                    .from('profiles')
+                    .update({'user_name': controller.text.trim()}).eq('email',currentUser.email);
+                setState(() {});
                 Navigator.pop(context); // 关闭对话框
               },
               child: const Text("确定"),

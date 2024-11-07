@@ -1,8 +1,6 @@
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
-import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
@@ -23,9 +21,6 @@ class _AddContactButtonState extends State<AddContactButton> {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ContactProvider>(context, listen: false).freshContact();
-    });
   }
 
   void _toggleAdd() async {

@@ -1,12 +1,9 @@
 import 'package:chat_app/model/shot_model.dart';
 import 'package:chat_app/model/story_model.dart';
 import 'package:chat_app/pages/login/login.dart';
-import 'package:chat_app/provider/chat_provider.dart';
-import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
@@ -35,16 +32,10 @@ Future<void> main() async {
   //强制屏幕方向朝上
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(
-            MultiProvider(
-              providers: [
-                ChangeNotifierProvider(
-                    create: (_) => ContactProvider()), // 添加 ContactProvider
-                ChangeNotifierProvider(
-                    create: (_) => ChatProvider()), // 添加 ChatProvider
-              ],
-              child: const MyApp(), // 启动应用
-            ),
-          ));
+
+
+const MyApp(), // 启动应用
+            ));
 }
 
 class MyApp extends StatelessWidget {

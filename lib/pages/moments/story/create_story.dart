@@ -196,7 +196,7 @@ class _CreateStoryState extends State<CreateStory> {
                           setState(() {
                             _showButtons = false;
                           });
-                          print("Confirm icon tapped!");
+                          // print("Confirm icon tapped!");
                         },
                         padding: EdgeInsets.zero,
                         child: const Icon(CupertinoIcons.check_mark_circled,

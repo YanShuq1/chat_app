@@ -14,7 +14,7 @@ class ShotProvider extends ChangeNotifier {
   Future<void> loadShots() async {
     try {
       final box = Hive.box<ShotModel>('shots');
-      print('Number of shots: ${box.length}');
+      // print('Number of shots: ${box.length}');
       _shots = box.values.toList();
       _shots.sort((a, b) =>
           box.keyAt(box.length - 1).compareTo(box.keyAt(0))); // 根据添加顺序排序

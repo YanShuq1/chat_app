@@ -60,6 +60,7 @@ Future<void> spSaveContact(Contact person) async {
 
 //保存从网络上扒取的联系人列表，要先执行spSaveContactEmailListFromDB()
 Future<void> spLoadAndSaveContactListFromDB() async {
+  contactList.clear();
   final dbInstance = Supabase.instance.client;
   Contact tempContact;
   for (var i in contactEmailList) {
@@ -69,7 +70,9 @@ Future<void> spLoadAndSaveContactListFromDB() async {
         contactName: dbResponse['user_name'],
         email: dbResponse['email'],
         avatarUrl: dbResponse['avatar_url']);
-    contactList.add(tempContact);
+    if (!contactList.contains(tempContact)) {
+      contactList.add(tempContact);
+    }
   }
   SharedPreferences prefs = await SharedPreferences.getInstance();
   List<String> saveList =
@@ -98,6 +101,7 @@ Future<List<String>> spLoadContactEmailList() async {
 
 //本地保存从网络上扒取的联系人邮箱列表
 Future<void> spLoadAndSaveContactEmailListFromDB() async {
+  contactEmailList.clear();
   final dbResponse = await Supabase.instance.client
       .from('contacts')
       .select()
@@ -134,6 +138,3 @@ Future<void> saveContactToDB(Contact contact) async {
     print(e);
   }
 }
-
-
-
