@@ -55,48 +55,48 @@ Future<void> spSaveChatList() async {
   await prefs.setStringList('chatList/${currentUser.email}', saveList);
 }
 
-//本地保持从网络上扒取的ChatList
-Future<void> spLoadAndSaveChatListFromDB() async {
-  chatList.clear();
-  // print("执行spLoadAndSaveChatListFromDB()");
-  final dbResponse = await Supabase.instance.client
-      .from('chatRooms')
-      .select()
-      .contains('chat_user_email', [currentUser.email]);
-  //print('dbResponse:$dbResponse');
-  for (var room in dbResponse) {
-    String chatRoomID = room['chat_room_id'];
-    List<dynamic> userEmails = room['chat_user_email'];
+ Future<void> spLoadAndSaveChatListFromDB() async {
+    chatList.clear(); // 避免重复数据
+    final dbResponse = await Supabase.instance.client
+        .from('chatRooms')
+        .select()
+        .contains('chat_user_email', [currentUser.email]);
 
-    // 过滤掉 currentUserEmail，保留对方的 email
-    String? otherUserEmail = userEmails.firstWhere(
-      (email) => email != currentUser.email,
-    );
+    for (var room in dbResponse) {
+      String chatRoomID = room['chat_room_id'];
+      List<dynamic> userEmails = room['chat_user_email'];
 
-    if (otherUserEmail != null) {
-      // 第三步：根据对方的 email 查询 profiles 表以获取用户详情
-      final profileResponse = await Supabase.instance.client
-          .from('profiles')
-          .select()
-          .eq('email', otherUserEmail)
-          .single();
+      // 查找当前用户之外的邮箱
+      String? otherUserEmail = userEmails.firstWhere(
+        (email) => email != currentUser.email,
+        orElse: () => null,
+      );
 
-      // 创建 Chattile 实例并添加到列表
-      chatList.add(Chattile(
-        contactName: profileResponse['user_name'] ?? 'Unnamed User',
-        email: profileResponse['email'] ?? '',
-        chatRoomID: chatRoomID,
-        avatarUrl: profileResponse['avatar_url'] ?? '',
-      ));
+      if (otherUserEmail != null) {
+        // 查询对方用户的资料
+        final profileResponse = await Supabase.instance.client
+            .from('profiles')
+            .select()
+            .eq('email', otherUserEmail)
+            .single();
+
+        if (!chatList.any((chat) => chat.chatRoomID == chatRoomID)) {
+          // 如果列表中没有该聊天室，才添加
+          chatList.add(Chattile(
+            contactName: profileResponse['user_name'] ?? 'Unnamed User',
+            email: profileResponse['email'] ?? '',
+            chatRoomID: chatRoomID,
+            avatarUrl: profileResponse['avatar_url'] ?? '',
+          ));
+        }
+      }
     }
-  }
-  // print("执行后:$chatList");
 
-  SharedPreferences prefs = await SharedPreferences.getInstance();
-  List<String> saveList =
-      chatList.map((chat) => json.encode(chat.toJson())).toList();
-  await prefs.setStringList('chatList/${currentUser.email}', saveList);
-}
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    List<String> saveList =
+        chatList.map((chat) => json.encode(chat.toJson())).toList();
+    await prefs.setStringList('chatList/${currentUser.email}', saveList);
+  }
 
 //数据库上保存聊天室信息
 Future<void> saveChatListToDB() async {

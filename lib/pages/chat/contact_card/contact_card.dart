@@ -4,7 +4,7 @@ import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/pages/moments/moments.dart';
 import 'package:chat_app/widgets/contact_to_top_switch.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+// import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ContactCard extends StatelessWidget {
   const ContactCard({super.key, required this.chattile});
@@ -214,12 +214,15 @@ class ContactCard extends StatelessWidget {
                     CupertinoIcons.chevron_right,
                     color: CupertinoColors.systemGrey3,
                   ),
-                  onTap: () async {
-                    await Supabase.instance.client
-                        .from('chatMessage')
-                        .delete()
-                        .eq('chat_room_id', chattile.chatRoomID);
-                  },
+                  onTap: (){}
+                  //TODO:删除聊天记录待完善
+
+                  // () async {
+                  //   await Supabase.instance.client
+                  //       .from('chatMessage')
+                  //       .delete()
+                  //       .eq('chat_room_id', chattile.chatRoomID);
+                  // },
                 ),
               ),
             ),

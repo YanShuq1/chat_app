@@ -53,6 +53,9 @@ class _RegisterPageState extends State<RegisterPage> {
     final password = _passwordController.text.trim();
     final userName = _userNameController.text.trim();
     final insurePassword = _insurePasswordController.text.trim();
+    setState(() {
+      _errorMessage = '';
+    });
 
     if (password == insurePassword) {
       try {
@@ -99,6 +102,10 @@ class _RegisterPageState extends State<RegisterPage> {
         setState(() {
           _errorMessage = e.toString(); // 捕获并显示其他异常
         });
+      } finally {
+        if (_errorMessage == '') {
+          Navigator.pop(context);
+        }
       }
     } else {
       setState(() {
@@ -119,17 +126,20 @@ class _RegisterPageState extends State<RegisterPage> {
             GestureDetector(
               onTap: _isPickingImage ? null : _pickImage,
               child: CircleAvatar(
-                radius: 55,
+                radius: 50,
                 backgroundColor:
                     _selectedImage == null ? CupertinoColors.activeBlue : null,
-                backgroundImage:
-                    _isPickingImage ? null : _selectedImage != null ? FileImage(_selectedImage!) : null,
+                backgroundImage: _isPickingImage
+                    ? null
+                    : _selectedImage != null
+                        ? FileImage(_selectedImage!)
+                        : null,
                 child: _isPickingImage
                     ? const CircularProgressIndicator()
                     : _selectedImage == null
                         ? const Icon(
                             CupertinoIcons.photo_camera,
-                            size: 50,
+                            size: 45,
                             color: CupertinoColors.white,
                           )
                         : null,
@@ -186,7 +196,7 @@ class _RegisterPageState extends State<RegisterPage> {
               color: Colors.grey.withOpacity(0.2),
               spreadRadius: 1,
               blurRadius: 5,
-              offset: Offset(0, 3),
+              offset: const Offset(0, 3),
             ),
           ],
         ),
