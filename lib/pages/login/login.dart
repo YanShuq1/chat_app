@@ -50,11 +50,11 @@ class _LoginPageState extends State<LoginPage> {
       context: context,
       builder: (BuildContext context) {
         return CupertinoAlertDialog(
-          title: Text("提示"),
-          content: Text("请勾选同意《用户协议》和《隐私政策》"),
+          title: const Text("提示"),
+          content: const Text("请勾选同意《用户协议》和《隐私政策》"),
           actions: [
             CupertinoDialogAction(
-              child: Text("确定"),
+              child: const Text("确定"),
               onPressed: () {
                 Navigator.of(context).pop();
               },
@@ -74,7 +74,7 @@ class _LoginPageState extends State<LoginPage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // 应用名称
-            Text(
+            const Text(
               'ChatApp',
               style: TextStyle(
                 fontSize: 32,
@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 1,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -123,7 +123,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 1,
                       blurRadius: 5,
-                      offset: Offset(0, 3),
+                      offset: const Offset(0, 3),
                     ),
                   ],
                 ),
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 // const SizedBox(width: 0.5),
-                Expanded(
+                const Expanded(
                   child: Text(
                     '登录/注册表示您同意《用户协议》和《隐私政策》',
                     style: TextStyle(

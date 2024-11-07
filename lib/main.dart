@@ -4,21 +4,18 @@ import 'package:chat_app/pages/login/login.dart';
 import 'package:chat_app/provider/chat_provider.dart';
 import 'package:chat_app/provider/contact_provider.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
-
-
   WidgetsFlutterBinding.ensureInitialized(); // 确保初始化
   await Supabase.initialize(
     url: 'https://cjvsombxqljpbexdpuvy.supabase.co',
-    anonKey: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqdnNvbWJ4cWxqcGJleGRwdXZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA2OTg0MzYsImV4cCI6MjA0NjI3NDQzNn0.cpRt8LkhLBVDT5Z1VAXQqzl0g4LFlQgiDHpjLGmml-A',
+    anonKey:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNqdnNvbWJ4cWxqcGJleGRwdXZ5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzA2OTg0MzYsImV4cCI6MjA0NjI3NDQzNn0.cpRt8LkhLBVDT5Z1VAXQqzl0g4LFlQgiDHpjLGmml-A',
   );
-
-        
-
 
   await Hive.initFlutter(); // 初始化 Hive
   Hive.registerAdapter(ShotModelAdapter()); // 注册shot适配器
@@ -35,17 +32,19 @@ Future<void> main() async {
   // 打印盒子中的项目数量
   // print('Number of shots: ${box.length}');
 
-  runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(
-            create: (_) => ContactProvider()), // 添加 ContactProvider
-                    ChangeNotifierProvider(
-            create: (_) => ChatProvider()), // 添加 ChatProvider
-      ],
-      child: const MyApp(), // 启动应用
-    ),
-  );
+  //强制屏幕方向朝上
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((_) => runApp(
+            MultiProvider(
+              providers: [
+                ChangeNotifierProvider(
+                    create: (_) => ContactProvider()), // 添加 ContactProvider
+                ChangeNotifierProvider(
+                    create: (_) => ChatProvider()), // 添加 ChatProvider
+              ],
+              child: const MyApp(), // 启动应用
+            ),
+          ));
 }
 
 class MyApp extends StatelessWidget {
@@ -54,8 +53,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const CupertinoApp(
-      debugShowCheckedModeBanner: false,
-      title: 'ChatApp Demo',
-      home: LoginPage());
+        debugShowCheckedModeBanner: false,
+        title: 'ChatApp Demo',
+        home: LoginPage());
   }
 }

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
@@ -16,9 +18,33 @@ class PrivateChat extends StatefulWidget {
 class _PrivateChatState extends State<PrivateChat> {
   final _messageController = TextEditingController();
 
+  late StreamSubscription _subscription;
+
+  @override
+  void initState() {
+    super.initState();
+    _startSubscribe();
+  }
+
+  void _startSubscribe() {
+    _subscription = Supabase.instance.client
+        .from('chatMessages')
+        .stream(primaryKey: ['chat_message_id']).listen(
+            (List<Map<String, dynamic>> data) {
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    _subscription.cancel();
+    super.dispose();
+  }
+
   Future<void> _sendMessage(DateTime sendTime) async {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
+        _messageController.clear();
 
     await Supabase.instance.client.from('chatMessages').insert({
       'chat_room_id': widget.chattile.chatRoomID,
@@ -35,7 +61,7 @@ class _PrivateChatState extends State<PrivateChat> {
 
     String messageID = messageList.first['chat_message_id'];
 
-    print(messageID);
+    // print(messageID);
 
     await Supabase.instance.client
         .from('chatRooms')
@@ -44,9 +70,9 @@ class _PrivateChatState extends State<PrivateChat> {
 
     await spLoadAndSaveLatestMessageListFromDB();
 
-      print("私聊更新最近消息:$latestMessageList");
+    // print("私聊更新最近消息:$latestMessageList");
 
-    _messageController.clear();
+
   }
 
   @override
@@ -60,16 +86,16 @@ class _PrivateChatState extends State<PrivateChat> {
     final contactAvatarUrl = widget.chattile.avatarUrl;
     final contactName = widget.chattile.contactName;
 
-    print(widget.chattile);
-    print(widget.chattile.avatarUrl);
-    print(widget.chattile.contactName);
-    print(widget.chattile.chatRoomID);
-    print(widget.chattile.email);
+    // print(widget.chattile);
+    // print(widget.chattile.avatarUrl);
+    // print(widget.chattile.contactName);
+    // print(widget.chattile.chatRoomID);
+    // print(widget.chattile.email);
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         middle: Text(contactName),
         trailing: GestureDetector(
-            child: Icon(CupertinoIcons.ellipsis),
+            child: const Icon(CupertinoIcons.ellipsis),
             onTap: () {
               Navigator.push(
                   context,
@@ -85,7 +111,7 @@ class _PrivateChatState extends State<PrivateChat> {
               child: StreamBuilder<List<Map<String, dynamic>>>(
                 stream: messageStream,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                  if (snapshot.connectionState == ConnectionState.waiting&&!snapshot.hasData) {
                     return const Center(child: CupertinoActivityIndicator());
                   }
                   if (!snapshot.hasData &&
@@ -148,7 +174,7 @@ class _PrivateChatState extends State<PrivateChat> {
                                   // 消息气泡
                                   Container(
                                     padding: const EdgeInsets.all(12),
-                                    constraints: BoxConstraints(
+                                    constraints: const BoxConstraints(
                                       maxWidth: 250, // 限制气泡的最大宽度
                                     ),
                                     decoration: BoxDecoration(
@@ -160,7 +186,7 @@ class _PrivateChatState extends State<PrivateChat> {
                                     ),
                                     child: Text(
                                       message['message'],
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                         fontSize: 16,
                                       ),
                                     ),
@@ -195,7 +221,7 @@ class _PrivateChatState extends State<PrivateChat> {
                                     const EdgeInsets.fromLTRB(40, 0, 40, 0),
                                 child: Text(
                                   formattedTime,
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     color: CupertinoColors.inactiveGray,
                                     fontStyle: FontStyle.italic,
                                     fontSize: 10,

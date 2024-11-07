@@ -123,7 +123,7 @@ Future<void> saveContactToDB(Contact contact) async {
         .select()
         .eq('user_email', contact.email)
         .single();
-    print(dbResponse);
+    // print(dbResponse);
     List<String> tempList = dbResponse['contact_email'] ?? [];
     tempList.add(currentUser.email);
     await Supabase.instance.client.from('contacts').upsert({

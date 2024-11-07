@@ -139,16 +139,13 @@ class _ProfilePageState extends State<ProfilePage> {
             onTap: () {
               Navigator.pop(context); // 点击二维码关闭对话框
             },
-            child: Container(
-              // color: Colors.white,
-              child: Center(
-                child: QrImageView(
-                  data: data,
-                  version: QrVersions.auto,
-                  size: 300, // 放大的二维码尺寸
-                  embeddedImage: const NetworkImage(
-                      'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg'),
-                ),
+            child: Center(
+              child: QrImageView(
+                data: data,
+                version: QrVersions.auto,
+                size: 300, // 放大的二维码尺寸
+                embeddedImage: const NetworkImage(
+                    'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg'),
               ),
             ),
           ),

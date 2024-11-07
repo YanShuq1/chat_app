@@ -3,10 +3,8 @@ import 'dart:async';
 import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
-import 'package:chat_app/provider/chat_provider.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyChatPage extends StatefulWidget {
@@ -35,14 +33,10 @@ class _MyChatPageState extends State<MyChatPage> {
       // 数据变化时，更新状态
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
-      print("监听更新最近消息:$latestMessageList");
+      // print("监听更新最近消息:$latestMessageList");
       setState(() {});
-      print("sub:$chatList,$latestMessageList");
+      // print("sub:$chatList,$latestMessageList");
     });
-  }
-
-  void _onChatChanged() {
-    _startSubscribe();
   }
 
   @override
@@ -53,11 +47,11 @@ class _MyChatPageState extends State<MyChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("builld:$chatList,$latestMessageList");
+    // print("builld:$chatList,$latestMessageList");
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         trailing: ContactsManageGestureDetector(
-          onAdded: _onChatChanged,
+          onAdded: () {},
         ),
         middle: const Text("Chat"),
       ),
@@ -81,7 +75,7 @@ class _MyChatPageState extends State<MyChatPage> {
                                   TextStyle(color: CupertinoColors.systemRed)),
                           onPressed: () {
                             chatList.removeAt(index);
-                            _onChatChanged();
+                            setState(() {});
                             Navigator.pop(context);
                           },
                         ),
@@ -103,7 +97,7 @@ class _MyChatPageState extends State<MyChatPage> {
                   latestMessageList[chatList[index].chatRoomID]
                           ?['latestMessage'] ??
                       'No messages',
-                  style: TextStyle(fontSize: 10.0),
+                  style: const TextStyle(fontSize: 10.0),
                 ),
                 trailing: Text(
                   latestMessageList[chatList[index].chatRoomID]

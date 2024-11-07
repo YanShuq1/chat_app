@@ -4,6 +4,7 @@ import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/pages/moments/moments.dart';
 import 'package:chat_app/widgets/contact_to_top_switch.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ContactCard extends StatelessWidget {
   const ContactCard({super.key, required this.chattile});
@@ -200,19 +201,25 @@ class ContactCard extends StatelessWidget {
                         bottom: BorderSide(
                             width: 1, color: CupertinoColors.systemGrey5))),
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                child: const CupertinoListTile(
+                child: CupertinoListTile(
                   leadingToTitle: 0,
-                  title: Text(
+                  title: const Text(
                     "清空聊天记录 ",
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  trailing: Icon(
+                  trailing: const Icon(
                     CupertinoIcons.chevron_right,
                     color: CupertinoColors.systemGrey3,
                   ),
+                  onTap: () async {
+                    await Supabase.instance.client
+                        .from('chatMessage')
+                        .delete()
+                        .eq('chat_room_id', chattile.chatRoomID);
+                  },
                 ),
               ),
             ),
