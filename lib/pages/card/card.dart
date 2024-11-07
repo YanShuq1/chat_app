@@ -1,3 +1,4 @@
+import 'package:chat_app/model/contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -47,7 +48,7 @@ class Avatar extends StatelessWidget {
         ClipRRect(
           borderRadius: BorderRadius.circular(10), // 设置头像的圆角
           child: Image.network(
-            'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg',
+            currentUser.avatarUrl,
             width: 150, // 设置头像宽度
             height: 150, // 设置头像高度
             fit: BoxFit.cover, // 图片充满容器

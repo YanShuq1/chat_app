@@ -1,6 +1,8 @@
+import 'package:chat_app/model/contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -10,9 +12,6 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  String nickname = "我爱睡觉"; // 昵称的初始值
-  String userid = "U2022niuniu";
-
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -23,15 +22,14 @@ class _ProfilePageState extends State<ProfilePage> {
         children: [
           ProfileTile(
             title: "头像",
-            trailing: const CircleAvatar(
-              backgroundImage: NetworkImage(
-                  'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg'), // 头像的URL
+            trailing: CircleAvatar(
+              backgroundImage: NetworkImage(currentUser.avatarUrl), // 头像的URL
               radius: 30,
             ),
             onTap: () {
               _showImageDialog(
                 context,
-                'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg',
+                currentUser.avatarUrl,
               );
             },
           ),
@@ -39,7 +37,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ProfileTile(
             title: "昵称",
             trailing: Text(
-              nickname,
+              currentUser.contactName,
               style: const TextStyle(color: CupertinoColors.inactiveGray),
             ),
             onTap: () {
@@ -48,9 +46,9 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           const CustomDivider(),
           ProfileTile(
-            title: "用户id",
+            title: "用户邮箱",
             trailing: Text(
-              userid,
+              currentUser.email,
               style: const TextStyle(color: CupertinoColors.inactiveGray),
             ),
             onTap: () {},
@@ -59,12 +57,13 @@ class _ProfilePageState extends State<ProfilePage> {
           ProfileTile(
             title: "二维码",
             trailing: QrImageView(
-              data: userid, // 使用用户ID作为二维码内容
+              data: currentUser.email, // 使用用户ID作为二维码内容
               version: QrVersions.auto,
               size: 50,
+              embeddedImage: NetworkImage(currentUser.avatarUrl),
             ),
             onTap: () {
-              _showQrCodeDialog(context, userid); // 点击放大二维码
+              _showQrCodeDialog(context); // 点击放大二维码
             },
           ),
           const CustomDivider(),
@@ -97,7 +96,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // 显示编辑昵称的对话框
   void _showEditNicknameDialog(BuildContext context) {
-    TextEditingController controller = TextEditingController(text: nickname);
+    TextEditingController controller =
+        TextEditingController(text: currentUser.contactName);
 
     showCupertinoDialog(
       context: context,
@@ -115,10 +115,7 @@ class _ProfilePageState extends State<ProfilePage> {
               child: const Text("取消"),
             ),
             CupertinoDialogAction(
-              onPressed: () {
-                setState(() {
-                  nickname = controller.text; // 更新昵称
-                });
+              onPressed: () async {
                 Navigator.pop(context); // 关闭对话框
               },
               child: const Text("确定"),
@@ -130,7 +127,7 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   // 显示放大二维码的对话框
-  void _showQrCodeDialog(BuildContext context, String data) {
+  void _showQrCodeDialog(BuildContext context) {
     showCupertinoDialog(
       context: context,
       builder: (context) {
@@ -141,11 +138,10 @@ class _ProfilePageState extends State<ProfilePage> {
             },
             child: Center(
               child: QrImageView(
-                data: data,
+                data: currentUser.email,
                 version: QrVersions.auto,
                 size: 300, // 放大的二维码尺寸
-                embeddedImage: const NetworkImage(
-                    'https://c-ssl.duitang.com/uploads/blog/202307/12/y9SY3apeubl4oJ5.jpeg'),
+                embeddedImage: NetworkImage(currentUser.avatarUrl),
               ),
             ),
           ),
@@ -172,20 +168,20 @@ class ProfileTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 16.0),
-      child: Row(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(left: 25.0), // 设置左边距
-            child: Text(title, style: const TextStyle(fontSize: 18)),
-          ),
-          const Spacer(), // 使用 Spacer 将左侧文字和右侧元素推开
-          GestureDetector(
-            onTap: onTap, // 添加点击事件
-            child: trailing, // 右侧的头像、昵称或二维码
-          ),
-          const SizedBox(width: 16), // 右侧留出一点间距
-          const Icon(CupertinoIcons.forward),
-        ],
+      child: GestureDetector(
+        onTap: onTap,
+        child: Row(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(left: 25.0), // 设置左边距
+              child: Text(title, style: const TextStyle(fontSize: 18)),
+            ),
+            const Spacer(), // 使用 Spacer 将左侧文字和右侧元素推开
+            trailing,
+            const SizedBox(width: 16), // 右侧留出一点间距
+            const Icon(CupertinoIcons.forward),
+          ],
+        ), // 添加点击事件
       ),
     );
   }
