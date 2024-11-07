@@ -1,6 +1,7 @@
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
+import 'package:chat_app/pages/moments/moments.dart';
 import 'package:chat_app/widgets/contact_to_top_switch.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -49,7 +50,7 @@ class ContactCard extends StatelessWidget {
                     height: 90,
                   ),
                   Container(
-                    padding: const EdgeInsets.fromLTRB(20.0, 20.0, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(20.0, 10.0, 0, 0),
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -58,13 +59,15 @@ class ContactCard extends StatelessWidget {
                         Text(
                           chattile.contactName,
                           style: const TextStyle(
-                            fontSize: 23.0,
+                            fontSize: 25.0,
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        //TODO:获取用户昵称和ID
+                        const SizedBox(
+                          height: 10,
+                        ),
                         Text(
-                          "用户名: ${contactList.firstWhere((contact) => contact.email == chattile.email).contactName}",
+                          "用户名: ${chattile.contactName}",
                           style: const TextStyle(
                             color: CupertinoColors.systemGrey2,
                             fontSize: 15.0,
@@ -140,19 +143,25 @@ class ContactCard extends StatelessWidget {
                         bottom: BorderSide(
                             width: 1, color: CupertinoColors.systemGrey5))),
                 padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
-                child: const CupertinoListTile(
+                child: CupertinoListTile(
                   leadingToTitle: 0,
-                  title: Text(
+                  title: const Text(
                     "好友Moment ",
                     style: TextStyle(
                       fontSize: 18.0,
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  trailing: Icon(
+                  trailing: const Icon(
                     CupertinoIcons.chevron_right,
                     color: CupertinoColors.systemGrey3,
                   ),
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const MyMomentsPage()));
+                  },
                 ),
               ),
             ),
@@ -175,7 +184,9 @@ class ContactCard extends StatelessWidget {
                       fontWeight: FontWeight.w500,
                     ),
                   ),
-                  trailing: ContactToTopSwitch(chattile: chattile,),
+                  trailing: ContactToTopSwitch(
+                    chattile: chattile,
+                  ),
                 ),
               ),
             ),

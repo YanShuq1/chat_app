@@ -56,6 +56,17 @@ class _AddContactButtonState extends State<AddContactButton> {
           'message': "Hellooooo! Let's chat now!",
           'send_time': DateTime.now().toIso8601String(),
         });
+
+        final messageList = await Supabase.instance.client
+            .from('chatMessages')
+            .select()
+            .eq('chat_room_id', chatRoomID)
+            .order('send_time', ascending: false);
+
+        String messageID = messageList.first['chat_message_id'];
+
+        await Supabase.instance.client.from('chatRooms').update(
+            {'latest_message_id': messageID}).eq('chat_room_id', chatRoomID);
       }
       // 更新状态
       setState(() {

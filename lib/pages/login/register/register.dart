@@ -19,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
   String? _errorMessage;
 
   //TODO:注册时获取头像和用户名
-  //final _avatarPicker = ImagePicker(); //头像获取
+
 
   Future<void> _register() async {
     final email = _emailController.text.trim();
@@ -69,9 +69,6 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('注册'),
-      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

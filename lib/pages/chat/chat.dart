@@ -1,11 +1,13 @@
+import 'dart:async';
+
 import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/provider/chat_provider.dart';
-import 'package:chat_app/provider/contact_provider.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:provider/provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class MyChatPage extends StatefulWidget {
   const MyChatPage({super.key});
@@ -17,32 +19,46 @@ class MyChatPage extends StatefulWidget {
 class _MyChatPageState extends State<MyChatPage> {
   final ScrollController _controller = ScrollController();
 
+  late StreamSubscription _streamSubscription;
+
   @override
   void initState() {
     super.initState();
-    spLoadAndSaveChatListFromDB();
-    spLoadAndSaveLatestMessageListFromDB();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<ContactProvider>(context, listen: false).freshContact();
+    _startSubscribe();
+  }
+
+  void _startSubscribe() {
+    _streamSubscription = Supabase.instance.client
+        .from('chatRooms')
+        .stream(primaryKey: ['chat_room_id']) // 根据你的表结构选择合适的主键
+        .listen((List<Map<String, dynamic>> data) {
+      // 数据变化时，更新状态
+      setState(() async {
+        await spLoadAndSaveChatListFromDB();
+        await spLoadAndSaveLatestMessageListFromDB();
+        print("subSet:$chatList,$latestMessageList");
+      });
+      print("sub:$chatList,$latestMessageList");
     });
   }
 
   void _onChatChanged() {
-    setState(() {
-      spLoadAndSaveChatListFromDB();
-    });
+    _startSubscribe();
+  }
+
+  @override
+  void dispose() {
+    _streamSubscription.cancel();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    print('chatList:$chatList');
+    print("builld:$chatList,$latestMessageList");
     return CupertinoPageScaffold(
       navigationBar: CupertinoNavigationBar(
         trailing: ContactsManageGestureDetector(
-          onAdded: () {
-            // 添加联系人时，刷新聊天列表
-            Provider.of<ChatProvider>(context, listen: false).loadChatList();
-          },
+          onAdded: _onChatChanged,
         ),
         middle: const Text("Chat"),
       ),

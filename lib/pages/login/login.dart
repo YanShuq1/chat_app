@@ -1,3 +1,4 @@
+import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/home/home.dart';
@@ -34,6 +35,7 @@ class _LoginPageState extends State<LoginPage> {
       spLoadAndSaveContactEmailListFromDB();
       spLoadAndSaveContactListFromDB();
       spLoadAndSaveChatListFromDB();
+      spLoadAndSaveLatestMessageListFromDB();
       Navigator.push(context,
           CupertinoPageRoute(builder: (context) => const MyHomePage()));
     } catch (e) {
@@ -66,9 +68,6 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        middle: Text('登录'),
-      ),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

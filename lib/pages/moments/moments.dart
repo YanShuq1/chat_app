@@ -13,7 +13,7 @@ class MyMomentsPage extends StatefulWidget {
 }
 
 class _MyMomentsPageState extends State<MyMomentsPage> {
-  String _searchQuery = ''; // 保存搜索输入的内容
+  // String _searchQuery = ''; // 保存搜索输入的内容
 
   @override
   Widget build(BuildContext context) {
@@ -73,7 +73,7 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
               child: SearchBar(
                 onChanged: (value) {
                   setState(() {
-                    _searchQuery = value;
+                    // _searchQuery = value;
                   });
                 },
               ),

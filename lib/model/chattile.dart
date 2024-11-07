@@ -58,11 +58,12 @@ Future<void> spSaveChatList() async {
 //本地保持从网络上扒取的ChatList
 Future<void> spLoadAndSaveChatListFromDB() async {
   chatList.clear();
+  print("执行spLoadAndSaveChatListFromDB()");
   final dbResponse = await Supabase.instance.client
       .from('chatRooms')
       .select()
       .contains('chat_user_email', [currentUser.email]);
-   print('dbResponse:$dbResponse');
+  //print('dbResponse:$dbResponse');
   for (var room in dbResponse) {
     String chatRoomID = room['chat_room_id'];
     List<dynamic> userEmails = room['chat_user_email'];
@@ -89,6 +90,7 @@ Future<void> spLoadAndSaveChatListFromDB() async {
       ));
     }
   }
+  print("执行后:$chatList");
 
   SharedPreferences prefs = await SharedPreferences.getInstance();
   List<String> saveList =
@@ -113,4 +115,3 @@ Future<void> saveChatListToDB() async {
     await Future.wait(futures);
   }
 }
-

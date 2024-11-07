@@ -41,192 +41,193 @@ class _PrivateChatState extends State<PrivateChat> {
         .update({'latest_message_id': messageID}).eq(
             'chat_room_id', widget.chattile.chatRoomID);
 
-
     _messageController.clear();
   }
 
   @override
   Widget build(BuildContext context) {
-    final _messageStream = Supabase.instance.client
+    final messageStream = Supabase.instance.client
         .from('chatMessages')
         .stream(primaryKey: ['chat_message_id'])
         .eq('chat_room_id', widget.chattile.chatRoomID)
         .order('send_time', ascending: false);
 
-    return StreamBuilder(
-      stream: _messageStream,
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const CupertinoActivityIndicator();
-        }
-        if (!snapshot.hasData) {
-          return const Center(child: Text('加载联系人信息失败'));
-        }
+    final contactAvatarUrl = widget.chattile.avatarUrl;
+    final contactName = widget.chattile.contactName;
 
-        final contactAvatarUrl = widget.chattile.avatarUrl;
-        final contactName = widget.chattile.contactName;
+    print(widget.chattile);
+    print(widget.chattile.avatarUrl);
+    print(widget.chattile.contactName);
+    print(widget.chattile.chatRoomID);
+    print(widget.chattile.email);
+    return CupertinoPageScaffold(
+      navigationBar: CupertinoNavigationBar(
+        middle: Text(contactName),
+        trailing: GestureDetector(
+            child: Icon(CupertinoIcons.ellipsis),
+            onTap: () {
+              Navigator.push(
+                  context,
+                  CupertinoPageRoute(
+                      builder: (context) =>
+                          ContactCard(chattile: widget.chattile)));
+            }),
+      ),
+      child: SafeArea(
+        child: Column(
+          children: [
+            Expanded(
+              child: StreamBuilder<List<Map<String, dynamic>>>(
+                stream: messageStream,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CupertinoActivityIndicator());
+                  }
+                  if (!snapshot.hasData && snapshot.connectionState == ConnectionState.done) {
+                    return const Center(child: Text('暂无消息'));
+                  }
 
-        return CupertinoPageScaffold(
-          navigationBar: CupertinoNavigationBar(
-            middle: Text(contactName),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: StreamBuilder<List<Map<String, dynamic>>>(
-                    stream: _messageStream,
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(
-                            child: CupertinoActivityIndicator());
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('暂无消息'));
-                      }
+                  final messages = snapshot.data!;
 
-                      final messages = snapshot.data!;
+                  return ListView.builder(
+                    reverse: true,
+                    itemCount: messages.length,
+                    itemBuilder: (context, index) {
+                      final message = messages[index];
+                      final isCurrentUser =
+                          message['sender'] == currentUser.email;
+                      final sendTime = DateTime.parse(message['send_time']);
+                      final formattedTime =
+                          sendTime.toLocal().toString().substring(0, 19);
 
-                      return ListView.builder(
-                        reverse: true,
-                        itemCount: messages.length,
-                        itemBuilder: (context, index) {
-                          final message = messages[index];
-                          final isCurrentUser =
-                              message['sender'] == currentUser.email;
-                          final sendTime = DateTime.parse(message['send_time']);
-                          final formattedTime =
-                              sendTime.toLocal().toString().substring(0, 19);
-
-                          return Padding(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 4, horizontal: 8),
-                            child: Align(
-                              alignment: isCurrentUser
-                                  ? Alignment.centerRight
-                                  : Alignment.centerLeft,
-                              child: Column(
-                                crossAxisAlignment: isCurrentUser
-                                    ? CrossAxisAlignment.end
-                                    : CrossAxisAlignment.start,
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 4, horizontal: 8),
+                        child: Align(
+                          alignment: isCurrentUser
+                              ? Alignment.centerRight
+                              : Alignment.centerLeft,
+                          child: Column(
+                            crossAxisAlignment: isCurrentUser
+                                ? CrossAxisAlignment.end
+                                : CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                mainAxisSize: MainAxisSize.min,
+                                mainAxisAlignment: isCurrentUser
+                                    ? MainAxisAlignment.end
+                                    : MainAxisAlignment.start,
                                 children: [
-                                  Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    mainAxisAlignment: isCurrentUser
-                                        ? MainAxisAlignment.end
-                                        : MainAxisAlignment.start,
-                                    children: [
-                                      if (!isCurrentUser) ...[
-                                        // 对方的头像
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: CupertinoColors.systemGrey,
-                                              width: 0.8,
-                                            ),
-                                          ),
-                                          child: ClipOval(
-                                            child: Image.network(
-                                              contactAvatarUrl,
-                                              width: 30, // 头像大小
-                                              height: 30,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        const SizedBox(width: 8),
-                                      ],
-                                      // 消息气泡
-                                      Container(
-                                        padding: const EdgeInsets.all(12),
-                                        constraints: BoxConstraints(
-                                          maxWidth: 250, // 限制气泡的最大宽度
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: CupertinoColors
-                                              .lightBackgroundGray,
-                                          borderRadius:
-                                              BorderRadius.circular(8),
-                                        ),
-                                        child: Text(
-                                          message['message'],
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                          ),
+                                  if (!isCurrentUser) ...[
+                                    // 对方的头像
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: CupertinoColors.systemGrey,
+                                          width: 0.8,
                                         ),
                                       ),
-                                      if (isCurrentUser) ...[
-                                        const SizedBox(width: 8),
-                                        // 当前用户的头像
-                                        Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            border: Border.all(
-                                              color: CupertinoColors.systemGrey,
-                                              width: 0.8,
-                                            ),
-                                          ),
-                                          child: ClipOval(
-                                            child: Image.network(
-                                              currentUser.avatarUrl,
-                                              width: 30, // 头像大小
-                                              height: 30,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          contactAvatarUrl,
+                                          width: 30, // 头像大小
+                                          height: 30,
+                                          fit: BoxFit.cover,
                                         ),
-                                      ],
-                                    ],
-                                  ),
-                                  const SizedBox(height: 4), // 间距
-                                  // 显示时间
-                                  Padding(
-                                    padding:
-                                        const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                                      ),
+                                    ),
+                                    const SizedBox(width: 8),
+                                  ],
+                                  // 消息气泡
+                                  Container(
+                                    padding: const EdgeInsets.all(12),
+                                    constraints: BoxConstraints(
+                                      maxWidth: 250, // 限制气泡的最大宽度
+                                    ),
+                                    decoration: BoxDecoration(
+                                      color: isCurrentUser
+                                          ? const Color.fromARGB(
+                                              190, 0, 123, 255)
+                                          : CupertinoColors.lightBackgroundGray,
+                                      borderRadius: BorderRadius.circular(8),
+                                    ),
                                     child: Text(
-                                      formattedTime,
+                                      message['message'],
                                       style: TextStyle(
-                                        color: CupertinoColors.inactiveGray,
-                                        fontStyle: FontStyle.italic,
-                                        fontSize: 10,
+                                        fontSize: 16,
                                       ),
                                     ),
                                   ),
+                                  if (isCurrentUser) ...[
+                                    const SizedBox(width: 8),
+                                    // 当前用户的头像
+                                    Container(
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: CupertinoColors.systemGrey,
+                                          width: 0.8,
+                                        ),
+                                      ),
+                                      child: ClipOval(
+                                        child: Image.network(
+                                          currentUser.avatarUrl,
+                                          width: 30, // 头像大小
+                                          height: 30,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
                                 ],
                               ),
-                            ),
-                          );
-                        },
+                              const SizedBox(height: 4), // 间距
+                              // 显示时间
+                              Padding(
+                                padding:
+                                    const EdgeInsets.fromLTRB(40, 0, 40, 0),
+                                child: Text(
+                                  formattedTime,
+                                  style: TextStyle(
+                                    color: CupertinoColors.inactiveGray,
+                                    fontStyle: FontStyle.italic,
+                                    fontSize: 10,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: CupertinoTextField(
-                          controller: _messageController,
-                          placeholder: '输入消息',
-                        ),
-                      ),
-                      CupertinoButton(
-                        onPressed: () {
-                          DateTime sendTime = DateTime.now();
-                          _sendMessage(sendTime);
-                        },
-                        child: const Icon(CupertinoIcons.arrow_up_circle_fill),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+                  );
+                },
+              ),
             ),
-          ),
-        );
-      },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: CupertinoTextField(
+                      controller: _messageController,
+                      placeholder: '输入消息',
+                    ),
+                  ),
+                  CupertinoButton(
+                    onPressed: () {
+                      DateTime sendTime = DateTime.now();
+                      _sendMessage(sendTime);
+                    },
+                    child: const Icon(CupertinoIcons.arrow_up_circle_fill),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
