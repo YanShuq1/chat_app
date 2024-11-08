@@ -106,7 +106,7 @@ class _MyChatPageState extends State<MyChatPage> {
                   style: const TextStyle(
                       color: CupertinoColors.systemGrey2, fontSize: 10.0),
                 ),
-                onTap: () {
+                onTap: () async {
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -114,6 +114,10 @@ class _MyChatPageState extends State<MyChatPage> {
                           PrivateChat(chattile: chatList[index]),
                     ),
                   );
+                  await spLoadAndSaveContactListFromDB();
+                  await spLoadAndSaveContactEmailListFromDB();
+                  await spLoadAndSaveChatListFromDB();
+                  await spLoadAndSaveLatestMessageListFromDB();
                 },
               ),
             );
