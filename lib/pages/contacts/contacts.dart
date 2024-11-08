@@ -43,6 +43,8 @@ class _MyContactsPageState extends State<MyContactsPage> {
       await spLoadAndSaveLatestMessageListFromDB();
 
       print(contactList);
+    });
+    setState(() {
       // 按照拼音首字母排序
       contactList.sort((a, b) => PinyinHelper.getFirstWordPinyin(a.contactName)
           .toUpperCase()
@@ -56,7 +58,6 @@ class _MyContactsPageState extends State<MyContactsPage> {
             latestMessageList[b.chatRoomID]!['latestMessageSendTime'];
         return timeB.compareTo(timeA);
       });
-      setState(() {});
     });
   }
 
