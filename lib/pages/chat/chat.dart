@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
+import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
 import 'package:chat_app/widgets/contacts_manage_gesture_detector.dart';
 import 'package:flutter/cupertino.dart';
@@ -31,6 +32,8 @@ class _MyChatPageState extends State<MyChatPage> {
         .stream(primaryKey: ['chat_room_id']) // 根据你的表结构选择合适的主键
         .listen((List<Map<String, dynamic>> data) async {
       // 数据变化时，更新状态
+      await spLoadAndSaveContactListFromDB();
+      await spLoadAndSaveContactEmailListFromDB();
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
       setState(() {});

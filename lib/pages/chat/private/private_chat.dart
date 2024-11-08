@@ -130,7 +130,7 @@ class _PrivateChatState extends State<PrivateChat> {
                           message['sender'] == currentUser.email;
                       final sendTime = DateTime.parse(message['send_time']);
                       final formattedTime =
-                          sendTime.toLocal().toString().substring(0, 19);
+                          sendTime.toString().substring(0, 19);
 
                       return Padding(
                         padding: const EdgeInsets.symmetric(

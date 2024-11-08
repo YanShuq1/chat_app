@@ -32,10 +32,10 @@ class _MyContactsPageState extends State<MyContactsPage> {
         .stream(primaryKey: ['user_email']) // 根据你的表结构选择合适的主键
         .listen((List<Map<String, dynamic>> data) async {
       // 数据变化时，更新状态
-      await spLoadAndSaveChatListFromDB();
-      await spLoadAndSaveLatestMessageListFromDB();
       await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveContactEmailListFromDB();
+      await spLoadAndSaveChatListFromDB();
+      await spLoadAndSaveLatestMessageListFromDB();
       // 按照拼音首字母排序
       contactList.sort((a, b) => PinyinHelper.getFirstWordPinyin(a.contactName)
           .toUpperCase()

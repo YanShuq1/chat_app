@@ -45,7 +45,6 @@ Future<void> spLoadAndSaveLatestMessageListFromDB() async {
 
     String message = messageResponse['message'];
     String sendTime = DateTime.parse(messageResponse['send_time'])
-        .toLocal()
         .toString()
         .substring(0, 19);
 

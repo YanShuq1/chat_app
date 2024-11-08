@@ -97,13 +97,14 @@ class _RegisterPageState extends State<RegisterPage> {
             'user_email': email,
             'contacts_email': [],
           });
+
         }
       } catch (e) {
         setState(() {
           _errorMessage = e.toString(); // 捕获并显示其他异常
         });
       } finally {
-        if (_errorMessage == '') {
+        if (_errorMessage == null) {
           Navigator.pop(context);
         }
       }
@@ -165,7 +166,7 @@ class _RegisterPageState extends State<RegisterPage> {
             // 注册按钮
             CupertinoButton.filled(
               onPressed: _register,
-              child: const Text('注册'),
+              child: const Text('注册并返回'),
             ),
             if (_errorMessage != null)
               Padding(
