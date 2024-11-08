@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/model/shot_model.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -16,7 +17,7 @@ class Shot extends StatelessWidget {
           return const Center(child: Text("No shots available"));
         }
 
-        List<ShotModel> shots = box.values.toList();
+        List<ShotModel> shots = box.values.toList().reversed.toList();
 
         return ListView.builder(
           scrollDirection: Axis.horizontal,
@@ -78,7 +79,7 @@ class Shot extends StatelessWidget {
                 ),
                 child: CircleAvatar(
                   radius: 23,
-                  backgroundImage: AssetImage(shot.avatarPath),
+                  backgroundImage: NetworkImage(currentUser.avatarUrl),
                 ),
               ),
             ),
@@ -88,13 +89,23 @@ class Shot extends StatelessWidget {
     );
   }
 
-  // 加载图片函数
+  // 加载图片函数，按照本地文件 > 网络图片 > assets 的顺序加载
   Future<ImageProvider> _loadImage(String imagePath) async {
-    // 检查文件是否存在于本地，如果不存在则从 assets 加载
+    print("niuniu");
+    print(imagePath);
+    // 检查文件是否存在于本地
     if (await File(imagePath).exists()) {
+      print(22);
       return FileImage(File(imagePath));
-    } else {
-      return AssetImage(imagePath); // 如果找不到文件则加载 assets 中的图片
+    }
+    // 检查是否为网络图片路径（以 "http" 或 "https" 开头）
+    else if (imagePath.startsWith('http')) {
+      print(11);
+      return NetworkImage(imagePath);
+    }
+    // 如果不是本地文件和网络图片，则加载 assets 中的图片
+    else {
+      return AssetImage('images/avatar2.jpg'); // 默认图片路径
     }
   }
 

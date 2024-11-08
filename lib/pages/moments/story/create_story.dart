@@ -1,10 +1,12 @@
 import 'dart:io';
 import 'dart:ui';
+import 'package:chat_app/model/contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:hive/hive.dart';
 import 'package:chat_app/model/story_model.dart';
+import 'package:intl/intl.dart';
 
 class CreateStory extends StatefulWidget {
   const CreateStory({super.key});
@@ -53,17 +55,22 @@ class _CreateStoryState extends State<CreateStory> {
     if (_storyText.isEmpty || _selectedImagePath == null) return;
 
     var box = Hive.box<StoryModel>('stories');
+    var now = DateTime.now();
+    var formattedTimestamp =
+        DateFormat('yyyy-MM-dd HH:mm').format(now); // 格式化到分钟
+
     var newStory = StoryModel(
-      username: '海小宝',
-      avatarUrl: 'images/avatar2.jpg',
-      timestamp: DateTime.now().toString(),
+      username: currentUser.contactName,
+      avatarUrl: currentUser.avatarUrl,
+      timestamp: formattedTimestamp, // 使用格式化后的时间字符串
       text: _storyText,
       imageUrl: _selectedImagePath!,
       likes: 0,
       comments: 0,
     );
+
     await box.add(newStory);
-    Navigator.pop(context); // Close the CreateStory page
+    Navigator.pop(context);
   }
 
   @override
@@ -228,15 +235,16 @@ class _CreateStoryState extends State<CreateStory> {
                   ),
                 ),
                 const SizedBox(height: 120),
-                const Row(
+                Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     CircleAvatar(
                       radius: 20,
-                      backgroundImage: AssetImage('images/avatar2.jpg'),
+                      backgroundImage: NetworkImage(currentUser.avatarUrl),
                     ),
-                    SizedBox(width: 10),
-                    Text('@ 海小宝', style: TextStyle(fontSize: 16)),
+                    const SizedBox(width: 10),
+                    Text(currentUser.contactName,
+                        style: TextStyle(fontSize: 16)),
                   ],
                 ),
               ],

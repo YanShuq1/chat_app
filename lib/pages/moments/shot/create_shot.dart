@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chat_app/model/contact.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -31,7 +32,7 @@ class _CreateShotState extends State<CreateShot> {
     if (_selectedImage != null) {
       final newShot = ShotModel(
         imagePath: _selectedImage!.path,
-        avatarPath: 'images/avatar2.jpg',
+        avatarPath: currentUser.avatarUrl, // 修改为当前用户的头像
       );
 
       // 将 Shot 直接添加到 Hive 中的 shots box
@@ -128,16 +129,18 @@ class _CreateShotState extends State<CreateShot> {
             ),
             const SizedBox(height: 80),
             // 用户信息
-            const Row(
+            Row(
               children: [
                 CircleAvatar(
                   radius: 24,
                   backgroundImage:
-                      AssetImage('images/avatar2.jpg'), // 替换成你的头像路径
+                      //AssetImage('images/avatar2.jpg'), // 替换成你的头像路径
+                      NetworkImage(currentUser
+                          .avatarUrl), // 使用 NetworkImage 替换 Image.network
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 Text(
-                  '@ 海小宝',
+                  currentUser.contactName,
                   style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],

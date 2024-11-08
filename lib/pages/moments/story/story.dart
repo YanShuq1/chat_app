@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/model/story_model.dart';
 import 'package:chat_app/widgets/like_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,8 +17,7 @@ class Story extends StatelessWidget {
         if (box.isEmpty) {
           return const Center(child: Text("No stories available"));
         }
-
-        List<StoryModel> stories = box.values.toList();
+        List<StoryModel> stories = box.values.toList().reversed.toList();
 
         return ListView.builder(
           shrinkWrap: true,
@@ -42,7 +42,7 @@ class Story extends StatelessWidget {
           Row(
             children: [
               CircleAvatar(
-                backgroundImage: AssetImage(story.avatarUrl),
+                backgroundImage: NetworkImage(currentUser.avatarUrl),
                 radius: 24,
               ),
               const SizedBox(width: 10),
