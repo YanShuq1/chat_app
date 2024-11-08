@@ -16,7 +16,7 @@ class _AddContactPageState extends State<AddContactPage> {
   bool _tile = false;
   Map<String, dynamic>? user;
 
-  String? _errorMessage = null;
+  String? _errorMessage;
 
   Future<void> searchForFriend(String email) async {
     try {

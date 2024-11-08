@@ -106,7 +106,11 @@ class _PrivateChatState extends State<PrivateChat> {
         middle: Text(contactName),
         trailing: GestureDetector(
             child: const Icon(CupertinoIcons.ellipsis),
-            onTap: () {
+            onTap: () async {
+              await spLoadAndSaveContactListFromDB();
+              await spLoadAndSaveContactEmailListFromDB();
+              await spLoadAndSaveChatListFromDB();
+              await spLoadAndSaveLatestMessageListFromDB();
               Navigator.push(
                   context,
                   CupertinoPageRoute(

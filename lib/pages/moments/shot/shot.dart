@@ -105,7 +105,7 @@ class Shot extends StatelessWidget {
     }
     // 如果不是本地文件和网络图片，则加载 assets 中的图片
     else {
-      return AssetImage('images/avatar2.jpg'); // 默认图片路径
+      return const AssetImage('images/avatar2.jpg'); // 默认图片路径
     }
   }
 
