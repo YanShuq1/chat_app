@@ -76,7 +76,7 @@ class ContactCard extends StatelessWidget {
                           ),
                         ),
                         Text(
-                          "email:${contactList.firstWhere((contact) => contact.email == chattile.email).email}",
+                          "email: ${contactList.firstWhere((contact) => contact.email == chattile.email).email}",
                           style: const TextStyle(
                             color: CupertinoColors.systemGrey2,
                             fontSize: 15.0,

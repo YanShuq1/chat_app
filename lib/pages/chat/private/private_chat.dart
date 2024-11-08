@@ -30,7 +30,19 @@ class _PrivateChatState extends State<PrivateChat> {
     _subscription = Supabase.instance.client
         .from('chatMessages')
         .stream(primaryKey: ['chat_message_id']).listen(
-            (List<Map<String, dynamic>> data) {
+            (List<Map<String, dynamic>> data) async {
+      await spLoadAndSaveContactListFromDB();
+      await spLoadAndSaveContactEmailListFromDB();
+      await spLoadAndSaveChatListFromDB();
+      await spLoadAndSaveLatestMessageListFromDB();
+      //根据最近消息时间排列聊天列表
+      chatList.sort((a, b) {
+        String timeA =
+            latestMessageList[a.chatRoomID]!['latestMessageSendTime'];
+        String timeB =
+            latestMessageList[b.chatRoomID]!['latestMessageSendTime'];
+        return timeB.compareTo(timeA);
+      });
       setState(() {});
     });
   }
@@ -44,7 +56,7 @@ class _PrivateChatState extends State<PrivateChat> {
   Future<void> _sendMessage(DateTime sendTime) async {
     final message = _messageController.text.trim();
     if (message.isEmpty) return;
-        _messageController.clear();
+    _messageController.clear();
 
     await Supabase.instance.client.from('chatMessages').insert({
       'chat_room_id': widget.chattile.chatRoomID,
@@ -71,8 +83,6 @@ class _PrivateChatState extends State<PrivateChat> {
     await spLoadAndSaveLatestMessageListFromDB();
 
     // print("私聊更新最近消息:$latestMessageList");
-
-
   }
 
   @override
@@ -111,7 +121,8 @@ class _PrivateChatState extends State<PrivateChat> {
               child: StreamBuilder<List<Map<String, dynamic>>>(
                 stream: messageStream,
                 builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting&&!snapshot.hasData) {
+                  if (snapshot.connectionState == ConnectionState.waiting &&
+                      !snapshot.hasData) {
                     return const Center(child: CupertinoActivityIndicator());
                   }
                   if (!snapshot.hasData &&

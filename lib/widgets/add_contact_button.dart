@@ -1,3 +1,4 @@
+import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
 import 'package:flutter/cupertino.dart';
@@ -62,6 +63,15 @@ class _AddContactButtonState extends State<AddContactButton> {
 
         await Supabase.instance.client.from('chatRooms').update(
             {'latest_message_id': messageID}).eq('chat_room_id', chatRoomID);
+
+        //根据最近消息时间排列聊天列表
+        chatList.sort((a, b) {
+          String timeA =
+              latestMessageList[a.chatRoomID]!['latestMessageSendTime'];
+          String timeB =
+              latestMessageList[b.chatRoomID]!['latestMessageSendTime'];
+          return timeB.compareTo(timeA);
+        });
       }
       // 更新状态
       setState(() {
@@ -80,7 +90,7 @@ class _AddContactButtonState extends State<AddContactButton> {
     }
     return CupertinoButton(
       onPressed: _isAdded ? null : _toggleAdd,
-      child: Text(_isAdded ? '已添加' : '添加'),
+      child: Text(_isAdded ? '已添加' : '添加',style: TextStyle(fontSize: 13),),
     );
   }
 }

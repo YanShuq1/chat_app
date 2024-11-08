@@ -36,6 +36,14 @@ class _MyChatPageState extends State<MyChatPage> {
       await spLoadAndSaveContactEmailListFromDB();
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
+      //根据最近消息时间排列聊天列表
+      chatList.sort((a, b) {
+        String timeA =
+            latestMessageList[a.chatRoomID]!['latestMessageSendTime'];
+        String timeB =
+            latestMessageList[b.chatRoomID]!['latestMessageSendTime'];
+        return timeB.compareTo(timeA);
+      });
       setState(() {});
     });
   }

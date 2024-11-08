@@ -16,8 +16,13 @@ class _AddContactPageState extends State<AddContactPage> {
   bool _tile = false;
   Map<String, dynamic>? user;
 
+  String? _errorMessage = null;
+
   Future<void> searchForFriend(String email) async {
     try {
+      setState(() {
+        _errorMessage = null;
+      });
       final response = await Supabase.instance.client
           .from('profiles')
           .select()
@@ -31,6 +36,7 @@ class _AddContactPageState extends State<AddContactPage> {
       print('Error: $e');
       setState(() {
         _tile = false;
+        _errorMessage = e.toString();
       });
     }
   }
@@ -43,11 +49,12 @@ class _AddContactPageState extends State<AddContactPage> {
         mainAxisSize: MainAxisSize.max,
         children: [
           Container(
-            width: 300,
-            height: 35,
+            width: 380,
+            height: 40,
             decoration: BoxDecoration(
-              border: Border.all(width: 1.0, color: CupertinoColors.systemGrey4),
-              borderRadius: BorderRadius.circular(5),
+              border:
+                  Border.all(width: 1.0, color: CupertinoColors.systemGrey4),
+              borderRadius: BorderRadius.circular(10),
             ),
             child: CupertinoSearchTextField(
               onChanged: (value) {
@@ -66,8 +73,10 @@ class _AddContactPageState extends State<AddContactPage> {
               leading: user!['avatar_url'] != null
                   ? Image.network(user!['avatar_url'], width: 20, height: 20)
                   : const Icon(CupertinoIcons.person),
-              title: Text(user!['user_name'], style: const TextStyle(fontSize: 13)),
-              subtitle: Text(user!['email'], style: const TextStyle(fontSize: 10)),
+              title: Text(user!['user_name'],
+                  style: const TextStyle(fontSize: 13)),
+              subtitle:
+                  Text(user!['email'], style: const TextStyle(fontSize: 10)),
               trailing: AddContactButton(
                 contact: Contact(
                   contactName: user!['user_name'],
@@ -77,6 +86,13 @@ class _AddContactPageState extends State<AddContactPage> {
                 onAdded: widget.onAdded,
               ),
             ),
+          if (_tile == false && _errorMessage != null)
+            CupertinoListTile(
+              leadingToTitle: 0,
+                title: Text(
+              _errorMessage.toString(),
+              style: const TextStyle(color: CupertinoColors.systemRed, fontSize: 8),
+            )),
         ],
       ),
       actions: [

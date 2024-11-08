@@ -41,6 +41,14 @@ class _MyContactsPageState extends State<MyContactsPage> {
           .toUpperCase()
           .compareTo(
               PinyinHelper.getFirstWordPinyin(b.contactName).toUpperCase()));
+      //根据最近消息时间排列聊天列表
+      chatList.sort((a, b) {
+        String timeA =
+            latestMessageList[a.chatRoomID]!['latestMessageSendTime'];
+        String timeB =
+            latestMessageList[b.chatRoomID]!['latestMessageSendTime'];
+        return timeB.compareTo(timeA);
+      });
       setState(() {});
     });
   }
@@ -84,17 +92,17 @@ class _MyContactsPageState extends State<MyContactsPage> {
                         ),
                       ),
                       CupertinoListTile(
-                    leading: Image.network(i.avatarUrl),
-                    title: Text(i.contactName),
-                    onTap: () {
-                      Navigator.push(
-                          context,
-                          CupertinoPageRoute(
-                              builder: (context) => PrivateChat(
-                                  chattile: chatList
-                                      .firstWhere((c) => c.email == i.email))));//跳转私聊
-                    },
-                  )
+                        leading: Image.network(i.avatarUrl),
+                        title: Text(i.contactName),
+                        onTap: () {
+                          Navigator.push(
+                              context,
+                              CupertinoPageRoute(
+                                  builder: (context) => PrivateChat(
+                                      chattile: chatList.firstWhere(
+                                          (c) => c.email == i.email)))); //跳转私聊
+                        },
+                      )
                     ],
                   );
                 } else {
@@ -106,8 +114,8 @@ class _MyContactsPageState extends State<MyContactsPage> {
                           context,
                           CupertinoPageRoute(
                               builder: (context) => PrivateChat(
-                                  chattile: chatList
-                                      .firstWhere((c) => c.email == i.email))));//跳转私聊
+                                  chattile: chatList.firstWhere(
+                                      (c) => c.email == i.email)))); //跳转私聊
                     },
                   );
                 }
