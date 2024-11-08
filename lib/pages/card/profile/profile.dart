@@ -60,7 +60,7 @@ class _ProfilePageState extends State<ProfilePage> {
               data: currentUser.email, // 使用用户ID作为二维码内容
               version: QrVersions.auto,
               size: 50,
-              embeddedImage: NetworkImage(currentUser.avatarUrl),
+              // embeddedImage: NetworkImage(currentUser.avatarUrl),
             ),
             onTap: () {
               _showQrCodeDialog(context); // 点击放大二维码
@@ -148,7 +148,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 data: currentUser.email,
                 version: QrVersions.auto,
                 size: 300, // 放大的二维码尺寸
-                embeddedImage: NetworkImage(currentUser.avatarUrl),
+                // embeddedImage: NetworkImage(currentUser.avatarUrl),
               ),
             ),
           ),
