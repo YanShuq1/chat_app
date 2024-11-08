@@ -20,6 +20,8 @@ class _MyContactsPageState extends State<MyContactsPage> {
 
   late StreamSubscription _contactStream;
 
+  String? currentLetter;
+
   @override
   void initState() {
     super.initState();
@@ -31,11 +33,16 @@ class _MyContactsPageState extends State<MyContactsPage> {
         .from('contacts')
         .stream(primaryKey: ['user_email']) // 根据你的表结构选择合适的主键
         .listen((List<Map<String, dynamic>> data) async {
+      setState(() {
+        currentLetter = null;
+      });
       // 数据变化时，更新状态
       await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveContactEmailListFromDB();
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
+
+      print(contactList);
       // 按照拼音首字母排序
       contactList.sort((a, b) => PinyinHelper.getFirstWordPinyin(a.contactName)
           .toUpperCase()
@@ -61,8 +68,6 @@ class _MyContactsPageState extends State<MyContactsPage> {
 
   @override
   Widget build(BuildContext context) {
-    String? currentLetter;
-
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
         middle: Text("Contacts"),
