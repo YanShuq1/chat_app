@@ -91,16 +91,16 @@ class Shot extends StatelessWidget {
 
   // 加载图片函数，按照本地文件 > 网络图片 > assets 的顺序加载
   Future<ImageProvider> _loadImage(String imagePath) async {
-    print("niuniu");
-    print(imagePath);
+    // print("niuniu");
+    // print(imagePath);
     // 检查文件是否存在于本地
     if (await File(imagePath).exists()) {
-      print(22);
+      // print(22);
       return FileImage(File(imagePath));
     }
     // 检查是否为网络图片路径（以 "http" 或 "https" 开头）
     else if (imagePath.startsWith('http')) {
-      print(11);
+      // print(11);
       return NetworkImage(imagePath);
     }
     // 如果不是本地文件和网络图片，则加载 assets 中的图片
