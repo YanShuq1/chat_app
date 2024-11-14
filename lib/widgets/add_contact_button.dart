@@ -26,7 +26,7 @@ class _AddContactButtonState extends State<AddContactButton> {
 
   void _toggleAdd() async {
     try {
-      if (!contactList.contains(widget.contact)) {
+      if (!contactEmailList.any((i)=>i==widget.contact.email)) {
         var uuid = const Uuid();
         String chatRoomID = uuid.v1();
         saveContactToDB(widget.contact); //自带双向添加好友
@@ -90,7 +90,7 @@ class _AddContactButtonState extends State<AddContactButton> {
     }
     return CupertinoButton(
       onPressed: _isAdded ? null : _toggleAdd,
-      child: Text(_isAdded ? '已添加' : '添加',style: const TextStyle(fontSize: 13),),
+      child: Text(_isAdded ? '已添加' : '添加',style: TextStyle(fontSize: 13),),
     );
   }
 }

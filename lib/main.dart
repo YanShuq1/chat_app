@@ -32,10 +32,8 @@ Future<void> main() async {
   //强制屏幕方向朝上
   SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
       .then((_) => runApp(
-
-
-const MyApp(), // 启动应用
-            ));
+            const MyApp(), // 启动应用
+          ));
 }
 
 class MyApp extends StatelessWidget {

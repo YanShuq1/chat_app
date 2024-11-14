@@ -141,7 +141,7 @@ class _CreateShotState extends State<CreateShot> {
                 const SizedBox(width: 10),
                 Text(
                   currentUser.contactName,
-                  style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),

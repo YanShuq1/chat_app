@@ -56,8 +56,7 @@ List<String> contactEmailList = [];
 
 //保存联系人列表
 Future<void> spSaveContact(Contact person) async {
-  if (!(contactList.contains(person) ||
-      contactEmailList.contains(person.email))) {
+  if (!(contactEmailList.any((i) => i == person.email))) {
     contactList.add(person);
     contactEmailList.add(person.email);
   }
@@ -71,7 +70,6 @@ Future<void> spSaveContact(Contact person) async {
 
 //保存从网络上扒取的联系人列表，要先执行spSaveContactEmailListFromDB()
 Future<void> spLoadAndSaveContactListFromDB() async {
-  contactList.clear();
   final dbInstance = Supabase.instance.client;
   Contact tempContact;
   for (var i in contactEmailList) {
@@ -81,10 +79,11 @@ Future<void> spLoadAndSaveContactListFromDB() async {
         contactName: dbResponse['user_name'],
         email: dbResponse['email'],
         avatarUrl: dbResponse['avatar_url']);
-    if (!contactList.contains(tempContact)) {
+    if (!contactList.any((i) => i.email == tempContact.email)) {
       contactList.add(tempContact);
     }
   }
+  
   SharedPreferences prefs = await SharedPreferences.getInstance();
   List<String> saveList =
       contactList.map((contact) => json.encode(contact.toJson())).toList();
@@ -115,10 +114,10 @@ Future<void> spLoadAndSaveContactEmailListFromDB() async {
   contactEmailList.clear();
   final dbResponse = await Supabase.instance.client
       .from('contacts')
-      .select()
-      .eq('user_email', currentUser.email)
-      .single();
+      .select('contacts_email')
+      .eq('user_email', currentUser.email).single();
   contactEmailList = List<String>.from(dbResponse['contacts_email']);
+  print("contactEmailList:$contactEmailList");
   SharedPreferences prefs = await SharedPreferences.getInstance();
   await prefs.setStringList(
       'contactEmailList/${currentUser.email}', contactEmailList);
@@ -127,6 +126,7 @@ Future<void> spLoadAndSaveContactEmailListFromDB() async {
 Future<void> saveContactToDB(Contact contact) async {
   try {
     contactEmailList.add(contact.email);
+    print(contactEmailList);
     await Supabase.instance.client.from('contacts').upsert({
       'user_email': currentUser.email,
       'contacts_email': contactEmailList,
@@ -139,8 +139,9 @@ Future<void> saveContactToDB(Contact contact) async {
         .eq('user_email', contact.email)
         .single();
     // print(dbResponse);
-    List<String> tempList = dbResponse['contact_email'] ?? [];
+    List<String> tempList = List<String>.from(dbResponse['contacts_email']);
     tempList.add(currentUser.email);
+    print(contactEmailList);
     await Supabase.instance.client.from('contacts').upsert({
       'user_email': contact.email,
       'contacts_email': tempList,

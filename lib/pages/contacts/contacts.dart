@@ -1,6 +1,5 @@
 import 'dart:async';
 
-import 'package:chat_app/model/chat_message.dart';
 import 'package:chat_app/model/chattile.dart';
 import 'package:chat_app/model/contact.dart';
 import 'package:chat_app/pages/chat/private/private_chat.dart';
@@ -33,31 +32,20 @@ class _MyContactsPageState extends State<MyContactsPage> {
         .from('contacts')
         .stream(primaryKey: ['user_email']) // 根据你的表结构选择合适的主键
         .listen((List<Map<String, dynamic>> data) async {
-      setState(() {
-        currentLetter = null;
-      });
       // 数据变化时，更新状态
-      await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveContactEmailListFromDB();
-      await spLoadAndSaveChatListFromDB();
-      await spLoadAndSaveLatestMessageListFromDB();
+      await spLoadAndSaveContactListFromDB();
+      // 按照拼音首字母排序
+      contactList.sort((a, b) {
+        currentLetter = null;
+        return PinyinHelper.getFirstWordPinyin(a.contactName)
+            .toUpperCase()
+            .compareTo(
+                PinyinHelper.getFirstWordPinyin(b.contactName).toUpperCase());
+      });
 
       print(contactList);
-    });
-    setState(() {
-      // 按照拼音首字母排序
-      contactList.sort((a, b) => PinyinHelper.getFirstWordPinyin(a.contactName)
-          .toUpperCase()
-          .compareTo(
-              PinyinHelper.getFirstWordPinyin(b.contactName).toUpperCase()));
-      //根据最近消息时间排列聊天列表
-      chatList.sort((a, b) {
-        String timeA =
-            latestMessageList[a.chatRoomID]!['latestMessageSendTime'];
-        String timeB =
-            latestMessageList[b.chatRoomID]!['latestMessageSendTime'];
-        return timeB.compareTo(timeA);
-      });
+      setState(() {});
     });
   }
 
@@ -69,6 +57,14 @@ class _MyContactsPageState extends State<MyContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // 按照拼音首字母排序
+    contactList.sort((a, b) {
+      currentLetter = null;
+      return PinyinHelper.getFirstWordPinyin(a.contactName)
+          .toUpperCase()
+          .compareTo(
+              PinyinHelper.getFirstWordPinyin(b.contactName).toUpperCase());
+    });
     return CupertinoPageScaffold(
       navigationBar: const CupertinoNavigationBar(
         middle: Text("Contacts"),

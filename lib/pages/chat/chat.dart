@@ -32,8 +32,8 @@ class _MyChatPageState extends State<MyChatPage> {
         .stream(primaryKey: ['chat_room_id']) // 根据你的表结构选择合适的主键
         .listen((List<Map<String, dynamic>> data) async {
       // 数据变化时，更新状态
-      await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveContactEmailListFromDB();
+      await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
       //根据最近消息时间排列聊天列表
@@ -50,8 +50,8 @@ class _MyChatPageState extends State<MyChatPage> {
 
   @override
   void dispose() {
-    _streamSubscription.cancel();
     super.dispose();
+    _streamSubscription.cancel();
   }
 
   @override
@@ -114,7 +114,7 @@ class _MyChatPageState extends State<MyChatPage> {
                   style: const TextStyle(
                       color: CupertinoColors.systemGrey2, fontSize: 10.0),
                 ),
-                onTap: () async {
+                onTap: () {
                   Navigator.push(
                     context,
                     CupertinoPageRoute(
@@ -122,10 +122,6 @@ class _MyChatPageState extends State<MyChatPage> {
                           PrivateChat(chattile: chatList[index]),
                     ),
                   );
-                  await spLoadAndSaveContactListFromDB();
-                  await spLoadAndSaveContactEmailListFromDB();
-                  await spLoadAndSaveChatListFromDB();
-                  await spLoadAndSaveLatestMessageListFromDB();
                 },
               ),
             );

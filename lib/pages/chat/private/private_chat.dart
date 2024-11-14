@@ -31,8 +31,8 @@ class _PrivateChatState extends State<PrivateChat> {
         .from('chatMessages')
         .stream(primaryKey: ['chat_message_id']).listen(
             (List<Map<String, dynamic>> data) async {
-      await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveContactEmailListFromDB();
+      await spLoadAndSaveContactListFromDB();
       await spLoadAndSaveChatListFromDB();
       await spLoadAndSaveLatestMessageListFromDB();
       //根据最近消息时间排列聊天列表
@@ -107,8 +107,8 @@ class _PrivateChatState extends State<PrivateChat> {
         trailing: GestureDetector(
             child: const Icon(CupertinoIcons.ellipsis),
             onTap: () async {
-              await spLoadAndSaveContactListFromDB();
               await spLoadAndSaveContactEmailListFromDB();
+              await spLoadAndSaveContactListFromDB();
               await spLoadAndSaveChatListFromDB();
               await spLoadAndSaveLatestMessageListFromDB();
               Navigator.push(

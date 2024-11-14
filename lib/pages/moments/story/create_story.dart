@@ -244,7 +244,7 @@ class _CreateStoryState extends State<CreateStory> {
                     ),
                     const SizedBox(width: 10),
                     Text(currentUser.contactName,
-                        style: const TextStyle(fontSize: 16)),
+                        style: TextStyle(fontSize: 16)),
                   ],
                 ),
               ],
