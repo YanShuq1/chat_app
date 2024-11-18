@@ -1,3 +1,4 @@
+import 'package:chat_app/model/shot.dart';
 import 'package:chat_app/pages/moments/shot/create_shot.dart';
 import 'package:chat_app/pages/moments/story/create_story.dart';
 import 'package:chat_app/pages/moments/shot/shot.dart';
@@ -15,6 +16,11 @@ class MyMomentsPage extends StatefulWidget {
 class _MyMomentsPageState extends State<MyMomentsPage> {
   // String _searchQuery = ''; // 保存搜索输入的内容
 
+  void _shotChangeState() {
+    // await loadShotListFromDataBase();
+    setState(() {});
+  }
+
   @override
   Widget build(BuildContext context) {
     return CupertinoPageScaffold(
@@ -25,31 +31,50 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
         child: Stack(
           children: [
             // 背景内容可以滚动
-            const Positioned.fill(
+            Positioned.fill(
               top: 60, // 给搜索框留出空间
               child: SingleChildScrollView(
-                padding: EdgeInsets.only(top: 0),
+                padding: const EdgeInsets.only(top: 0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Shot Section
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Text(
-                        'Shot',
-                        style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                    Row(
+                      children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(horizontal: 16.0),
+                          child: Text(
+                            'Shot',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
-                      ),
+                        GestureDetector(
+                          //状态刷新按钮
+                          child: const Icon(
+                            CupertinoIcons.arrow_2_circlepath,
+                            size: 20,
+                          ),
+                          onTap: () {
+                            _shotChangeState();
+                          },
+                        ),
+                      ],
                     ),
                     SizedBox(
                       height: 120, // Shot图片的高度
-                      child: Shot(), // 使用 Shot Widget
+                      child: FutureBuilder(
+                        future: loadShotListFromDataBase(),
+                        builder: (context, snapshot) {
+                          return ShotPage(onRefresh: _shotChangeState,);
+                        }
+                      ), // 使用 ShotPage Widget
                     ),
 
                     // Story Section
-                    Padding(
+                    const Padding(
                       padding: EdgeInsets.all(16.0),
                       child: Text(
                         'Story',
@@ -59,7 +84,7 @@ class _MyMomentsPageState extends State<MyMomentsPage> {
                         ),
                       ),
                     ),
-                    Story(), // 使用 Story Widget
+                    const Story(), // 使用 Story Widget
                   ],
                 ),
               ),

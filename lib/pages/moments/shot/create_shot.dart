@@ -1,10 +1,9 @@
 import 'dart:io';
 import 'package:chat_app/model/contact.dart';
+import 'package:chat_app/model/shot.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:hive_flutter/hive_flutter.dart';
-import 'package:chat_app/model/shot_model.dart';
 
 class CreateShot extends StatefulWidget {
   const CreateShot({super.key});
@@ -14,8 +13,9 @@ class CreateShot extends StatefulWidget {
 }
 
 class _CreateShotState extends State<CreateShot> {
-  XFile? _selectedImage; // 保存选择的图片
+  XFile? _selectedImage; // 保存选择的图片,XFile为跨平台的抽象File类
   final ImagePicker _picker = ImagePicker();
+  // bool _isLoading = false; //加载
 
   // 从图库中选择图片
   Future<void> _pickImage() async {
@@ -28,22 +28,29 @@ class _CreateShotState extends State<CreateShot> {
   }
 
   // 将 shot 添加到 Hive
-  Future<void> _addShotToHive() async {
-    if (_selectedImage != null) {
-      final newShot = ShotModel(
-        imagePath: _selectedImage!.path,
-        avatarPath: currentUser.avatarUrl, // 修改为当前用户的头像
-      );
+  // Future<void> _addShotToHive() async {
+  //   if (_selectedImage != null) {
+  //     final newShot = ShotModel(
+  //       imagePath: _selectedImage!.path,
+  //       avatarPath: currentUser.avatarUrl, // 修改为当前用户的头像
+  //     );
 
-      // 将 Shot 直接添加到 Hive 中的 shots box
-      final box = Hive.box<ShotModel>('shots');
-      await box.add(newShot);
+  //     // 将 Shot 直接添加到 Hive 中的 shots box
+  //     final box = Hive.box<ShotModel>('shots');
+  //     await box.add(newShot);
 
-      // print("Shot added successfully.");
-      Navigator.of(context).pop(); // 返回上一个页面
-    } else {
-      // print("No image selected");
-    }
+  //     // print("Shot added successfully.");
+  //     Navigator.of(context).pop(); // 返回上一个页面
+  //   } else {
+  //     // print("No image selected");
+  //   }
+  // }
+
+  Future<void> _addShotToDB() async {
+    setState(() {});
+
+    await createAndSendShotToDataBase(_selectedImage!);
+    await loadShotListFromDataBase();
   }
 
   @override
@@ -98,7 +105,9 @@ class _CreateShotState extends State<CreateShot> {
                       padding: EdgeInsets.zero, // 去除内边距
                       color: Colors.red.withOpacity(0.3),
                       onPressed: () {
-                        Navigator.of(context).pop(); // 返回上一个页面
+                        setState(() {
+                          _selectedImage = null;
+                        });
                       },
                       child: const Icon(
                         CupertinoIcons.clear,
@@ -116,7 +125,9 @@ class _CreateShotState extends State<CreateShot> {
                     child: CupertinoButton(
                       padding: EdgeInsets.zero, // 去除内边距
                       color: Colors.green.withOpacity(0.3),
-                      onPressed: _addShotToHive, // 调用添加到 Hive 的方法
+                      onPressed: () {
+                        _addShotToDB();
+                      }, // 调用添加到 Hive 的方法
                       child: const Icon(
                         CupertinoIcons.check_mark,
                         size: 24,
@@ -141,7 +152,8 @@ class _CreateShotState extends State<CreateShot> {
                 const SizedBox(width: 10),
                 Text(
                   currentUser.contactName,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
               ],
             ),
