@@ -1,4 +1,4 @@
-import 'package:chat_app/model/shot_model.dart';
+// import 'package:chat_app/model/shot_model.dart';
 import 'package:chat_app/model/story_model.dart';
 import 'package:chat_app/pages/login/login.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,15 +15,15 @@ Future<void> main() async {
   );
 
   await Hive.initFlutter(); // 初始化 Hive
-  Hive.registerAdapter(ShotModelAdapter()); // 注册shot适配器
+  // Hive.registerAdapter(ShotModelAdapter()); // 注册shot适配器
   Hive.registerAdapter(StoryModelAdapter());
-  await Hive.openBox<ShotModel>('shots'); // 打开 Hive 数据库
+  // await Hive.openBox<ShotModel>('shots'); // 打开 Hive 数据库
   await Hive.openBox<StoryModel>('stories');
 
-  final box = Hive.box<ShotModel>('shots'); // 直接获取已打开的 box
+  // final box = Hive.box<ShotModel>('shots'); // 直接获取已打开的 box
 
   // 清空盒子中的所有数据,测试用的
-  await box.clear();
+  // await box.clear();
   final b = Hive.box<StoryModel>('stories');
   await b.clear();
   // 打印盒子中的项目数量
