@@ -1,0 +1,500 @@
+@startuml
+set namespaceSeparator ::
+
+class "chat_app::main.dart::MyApp" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::main.dart::MyApp"
+
+class "chat_app::model::chat_message.dart::ChatMessage" {
+  +String sender
+  +String message
+  +String sendTime
+  +String chatRoomID
+}
+
+class "chat_app::model::contact.dart::Contact" {
+  +String contactName
+  +String avatarUrl
+  +String email
+}
+
+class "chat_app::model::chattile.dart::Chattile" {
+  +String contactName
+  +String email
+  +String chatRoomID
+  +String avatarUrl
+}
+
+class "chat_app::model::story.dart::Story" {
+  +String storyID
+  +String email
+  +String content
+  +List<String> photoUrlList
+  +String sendTime
+  +List<String> likeContactEmailList
+  +List<String> commentsIDList
+}
+
+class "chat_app::model::story_model.dart::StoryModel" {
+  +String username
+  +String avatarUrl
+  +String timestamp
+  +String text
+  +String imageUrl
+  +int likes
+  +int comments
+}
+
+class "chat_app::model::story_model.dart::StoryModelAdapter" {
+  +int typeId
+  +int hashCode
+  +StoryModel read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "chat_app::model::story_model.dart::StoryModelAdapter"
+
+class "chat_app::model::shot_model.dart::ShotModel" {
+  +String imagePath
+  +String avatarPath
+}
+
+class "chat_app::model::shot_model.dart::ShotModelAdapter" {
+  +int typeId
+  +int hashCode
+  +ShotModel read()
+  +void write()
+  +bool ==()
+}
+
+"hive::hive.dart::TypeAdapter" <|-- "chat_app::model::shot_model.dart::ShotModelAdapter"
+
+class "chat_app::model::shot.dart::Shot" {
+  +String photoUrl
+  +String email
+  +String sendTime
+  +String shotID
+}
+
+class "chat_app::pages::home::home.dart::MyHomePage" {
+  +State<MyHomePage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::home::home.dart::MyHomePage"
+
+class "chat_app::pages::home::home.dart::_MyHomePageState" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::home::home.dart::_MyHomePageState"
+
+class "chat_app::pages::moments::moments.dart::MyMomentsPage" {
+  +State<MyMomentsPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::moments::moments.dart::MyMomentsPage"
+
+class "chat_app::pages::moments::moments.dart::_MyMomentsPageState" {
+  -void _shotChangeState()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::moments::moments.dart::_MyMomentsPageState"
+
+class "chat_app::pages::moments::moments.dart::ExpandableFab" {
+  +_ExpandableFabState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::moments::moments.dart::ExpandableFab"
+
+class "chat_app::pages::moments::moments.dart::_ExpandableFabState" {
+  -bool _isExpanded
+  +Widget build()
+  -Widget _buildExpandedButton()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::moments::moments.dart::_ExpandableFabState"
+
+class "chat_app::pages::moments::moments.dart::SearchBar" {
+  +void Function(String) onChanged
+  +Widget build()
+}
+
+"chat_app::pages::moments::moments.dart::SearchBar" o-- "flutter::src::foundation::basic_types.dart::void Function(String)"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::moments::moments.dart::SearchBar"
+
+class "chat_app::pages::moments::moments.dart::CustomDivider" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::moments::moments.dart::CustomDivider"
+
+class "chat_app::pages::moments::shot::create_shot.dart::CreateShot" {
+  +_CreateShotState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::moments::shot::create_shot.dart::CreateShot"
+
+class "chat_app::pages::moments::shot::create_shot.dart::_CreateShotState" {
+  -XFile? _selectedImage
+  -ImagePicker _picker
+  -dynamic _pickImage()
+  -dynamic _addShotToDB()
+  +Widget build()
+}
+
+"chat_app::pages::moments::shot::create_shot.dart::_CreateShotState" o-- "cross_file::src::types::interface.dart::XFile"
+"chat_app::pages::moments::shot::create_shot.dart::_CreateShotState" o-- "image_picker::image_picker.dart::ImagePicker"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::moments::shot::create_shot.dart::_CreateShotState"
+
+class "chat_app::pages::moments::shot::shot.dart::ShotPage" {
+  +void Function() onRefresh
+  +State<ShotPage> createState()
+}
+
+"chat_app::pages::moments::shot::shot.dart::ShotPage" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::moments::shot::shot.dart::ShotPage"
+
+class "chat_app::pages::moments::shot::shot.dart::_ShotPageState" {
+  +bool isLoading
+  +void initState()
+  -dynamic _loadShotPageState()
+  -dynamic _deleteShotPageState()
+  +Widget build()
+  -Widget _buildShotItem()
+  -dynamic _loadImage()
+  -void _showImageDialog()
+  -void _showDeleteShotDialog()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::moments::shot::shot.dart::_ShotPageState"
+
+class "chat_app::pages::moments::story::create_story.dart::CreateStory" {
+  +_CreateStoryState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::moments::story::create_story.dart::CreateStory"
+
+class "chat_app::pages::moments::story::create_story.dart::_CreateStoryState" {
+  -bool _showButtons
+  -bool _isImageScaled
+  -String _storyText
+  -String? _selectedImagePath
+  +void initState()
+  -dynamic _initializeHive()
+  -dynamic _pickImageFromGallery()
+  -dynamic _pickImageFromCamera()
+  -dynamic _submitStory()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::moments::story::create_story.dart::_CreateStoryState"
+
+class "chat_app::pages::moments::story::story.dart::Story" {
+  +Widget build()
+  -Widget _buildStoryItem()
+  -dynamic _loadImage()
+  -Widget _buildActionButton()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::moments::story::story.dart::Story"
+
+class "chat_app::pages::card::card.dart::MyCardPage" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::card::card.dart::MyCardPage"
+
+class "chat_app::pages::card::card.dart::Avatar" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::card::card.dart::Avatar"
+
+class "chat_app::pages::card::card.dart::CardPageButton" {
+  +Widget build()
+  -Widget _buildButton()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::card::card.dart::CardPageButton"
+
+class "chat_app::pages::card::profile::profile.dart::ProfilePage" {
+  +_ProfilePageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::card::profile::profile.dart::ProfilePage"
+
+class "chat_app::pages::card::profile::profile.dart::_ProfilePageState" {
+  +Widget build()
+  -void _showImageDialog()
+  -void _showEditNicknameDialog()
+  -void _showQrCodeDialog()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::card::profile::profile.dart::_ProfilePageState"
+
+class "chat_app::pages::card::profile::profile.dart::ProfileTile" {
+  +String title
+  +Widget trailing
+  +void Function()? onTap
+  +Widget build()
+}
+
+"chat_app::pages::card::profile::profile.dart::ProfileTile" o-- "flutter::src::widgets::framework.dart::Widget"
+"chat_app::pages::card::profile::profile.dart::ProfileTile" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::card::profile::profile.dart::ProfileTile"
+
+class "chat_app::pages::card::profile::profile.dart::CustomDivider" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::card::profile::profile.dart::CustomDivider"
+
+class "chat_app::pages::card::setting::setting.dart::SettingsPage" {
+  +_SettingsPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::card::setting::setting.dart::SettingsPage"
+
+class "chat_app::pages::card::setting::setting.dart::_SettingsPageState" {
+  +bool isNotificationEnabled
+  +bool isTeenModeEnabled
+  +bool isDarkModeEnabled
+  +Widget build()
+  -Widget _buildSwitchTile()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::card::setting::setting.dart::_SettingsPageState"
+
+class "chat_app::pages::chat::contact_card::contact_card.dart::ContactCard" {
+  +Chattile chattile
+  +Widget build()
+}
+
+"chat_app::pages::chat::contact_card::contact_card.dart::ContactCard" o-- "chat_app::model::chattile.dart::Chattile"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::pages::chat::contact_card::contact_card.dart::ContactCard"
+
+class "chat_app::pages::chat::contact_manage::add_contact.dart::AddContactPage" {
+  +void Function() onAdded
+  +State<AddContactPage> createState()
+}
+
+"chat_app::pages::chat::contact_manage::add_contact.dart::AddContactPage" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::chat::contact_manage::add_contact.dart::AddContactPage"
+
+class "chat_app::pages::chat::contact_manage::add_contact.dart::_AddContactPageState" {
+  +String searchingEmail
+  -bool _tile
+  +Map<String, dynamic>? user
+  -String? _errorMessage
+  +dynamic searchForFriend()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::chat::contact_manage::add_contact.dart::_AddContactPageState"
+
+class "chat_app::pages::chat::private::private_chat.dart::PrivateChat" {
+  +Chattile chattile
+  +_PrivateChatState createState()
+}
+
+"chat_app::pages::chat::private::private_chat.dart::PrivateChat" o-- "chat_app::model::chattile.dart::Chattile"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::chat::private::private_chat.dart::PrivateChat"
+
+class "chat_app::pages::chat::private::private_chat.dart::_PrivateChatState" {
+  -TextEditingController _messageController
+  -StreamSubscription<dynamic> _subscription
+  +void initState()
+  -void _startSubscribe()
+  +void dispose()
+  -dynamic _sendMessage()
+  +Widget build()
+}
+
+"chat_app::pages::chat::private::private_chat.dart::_PrivateChatState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"chat_app::pages::chat::private::private_chat.dart::_PrivateChatState" o-- "dart::async::StreamSubscription<dynamic>"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::chat::private::private_chat.dart::_PrivateChatState"
+
+class "chat_app::pages::chat::chat.dart::MyChatPage" {
+  +State<MyChatPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::chat::chat.dart::MyChatPage"
+
+class "chat_app::pages::chat::chat.dart::_MyChatPageState" {
+  -ScrollController _controller
+  -StreamSubscription<dynamic> _streamSubscription
+  +void initState()
+  -void _startSubscribe()
+  +void dispose()
+  +Widget build()
+}
+
+"chat_app::pages::chat::chat.dart::_MyChatPageState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"chat_app::pages::chat::chat.dart::_MyChatPageState" o-- "dart::async::StreamSubscription<dynamic>"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::chat::chat.dart::_MyChatPageState"
+
+class "chat_app::pages::contacts::contacts.dart::MyContactsPage" {
+  +State<MyContactsPage> createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::contacts::contacts.dart::MyContactsPage"
+
+class "chat_app::pages::contacts::contacts.dart::_MyContactsPageState" {
+  -ScrollController _controller
+  -StreamSubscription<dynamic> _contactStream
+  +String? currentLetter
+  +void initState()
+  -void _subscription()
+  +void dispose()
+  +Widget build()
+}
+
+"chat_app::pages::contacts::contacts.dart::_MyContactsPageState" o-- "flutter::src::widgets::scroll_controller.dart::ScrollController"
+"chat_app::pages::contacts::contacts.dart::_MyContactsPageState" o-- "dart::async::StreamSubscription<dynamic>"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::contacts::contacts.dart::_MyContactsPageState"
+
+class "chat_app::pages::login::login.dart::LoginPage" {
+  +_LoginPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::login::login.dart::LoginPage"
+
+class "chat_app::pages::login::login.dart::_LoginPageState" {
+  -TextEditingController _emailController
+  -TextEditingController _passwordController
+  -String? _errorMessage
+  +bool isAgreed
+  -dynamic _login()
+  -void _showAgreementWarning()
+  +Widget build()
+}
+
+"chat_app::pages::login::login.dart::_LoginPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::login::login.dart::_LoginPageState"
+
+class "chat_app::pages::login::register::register.dart::RegisterPage" {
+  +_RegisterPageState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::pages::login::register::register.dart::RegisterPage"
+
+class "chat_app::pages::login::register::register.dart::_RegisterPageState" {
+  -TextEditingController _userNameController
+  -TextEditingController _emailController
+  -TextEditingController _passwordController
+  -TextEditingController _insurePasswordController
+  -ImagePicker _picker
+  -File? _selectedImage
+  -String? _errorMessage
+  -bool _isPickingImage
+  -dynamic _pickImage()
+  -dynamic _register()
+  +Widget build()
+  -Widget _buildInputField()
+}
+
+"chat_app::pages::login::register::register.dart::_RegisterPageState" o-- "flutter::src::widgets::editable_text.dart::TextEditingController"
+"chat_app::pages::login::register::register.dart::_RegisterPageState" o-- "image_picker::image_picker.dart::ImagePicker"
+"chat_app::pages::login::register::register.dart::_RegisterPageState" o-- "dart::io::File"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::pages::login::register::register.dart::_RegisterPageState"
+
+class "chat_app::widgets::contact_card_gesture_detector.dart::ContactCardGestureDetector" {
+  +Chattile chattile
+  +Widget build()
+}
+
+"chat_app::widgets::contact_card_gesture_detector.dart::ContactCardGestureDetector" o-- "chat_app::model::chattile.dart::Chattile"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::widgets::contact_card_gesture_detector.dart::ContactCardGestureDetector"
+
+class "chat_app::widgets::contact_to_top_switch.dart::ContactToTopSwitch" {
+  +Chattile chattile
+  +State<ContactToTopSwitch> createState()
+}
+
+"chat_app::widgets::contact_to_top_switch.dart::ContactToTopSwitch" o-- "chat_app::model::chattile.dart::Chattile"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::widgets::contact_to_top_switch.dart::ContactToTopSwitch"
+
+class "chat_app::widgets::contact_to_top_switch.dart::_ContactToTopSwitchState" {
+  -bool _value
+  +void initState()
+  -dynamic _loadSwitchValue()
+  -dynamic _saveSwitchValue()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::widgets::contact_to_top_switch.dart::_ContactToTopSwitchState"
+
+class "chat_app::widgets::add_contact_button.dart::AddContactButton" {
+  +Contact contact
+  +void Function() onAdded
+  +State<AddContactButton> createState()
+}
+
+"chat_app::widgets::add_contact_button.dart::AddContactButton" o-- "chat_app::model::contact.dart::Contact"
+"chat_app::widgets::add_contact_button.dart::AddContactButton" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::widgets::add_contact_button.dart::AddContactButton"
+
+class "chat_app::widgets::add_contact_button.dart::_AddContactButtonState" {
+  -bool _isAdded
+  +void initState()
+  -void _toggleAdd()
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::widgets::add_contact_button.dart::_AddContactButtonState"
+
+class "chat_app::widgets::contacts_manage_gesture_detector.dart::ContactsManageGestureDetector" {
+  +void Function() onAdded
+  +Widget build()
+}
+
+"chat_app::widgets::contacts_manage_gesture_detector.dart::ContactsManageGestureDetector" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::widgets::contacts_manage_gesture_detector.dart::ContactsManageGestureDetector"
+
+class "chat_app::widgets::like_button.dart::LikeButtonWithAnimation" {
+  +_LikeButtonWithAnimationState createState()
+}
+
+"flutter::src::widgets::framework.dart::StatefulWidget" <|-- "chat_app::widgets::like_button.dart::LikeButtonWithAnimation"
+
+class "chat_app::widgets::like_button.dart::_LikeButtonWithAnimationState" {
+  +bool isLiked
+  -AnimationController _controller
+  -Animation<double> _animation
+  -List<OverlayEntry> _overlayEntries
+  +void initState()
+  -void _toggleLike()
+  -void _showHeartAnimation()
+  +void dispose()
+  +Widget build()
+}
+
+"chat_app::widgets::like_button.dart::_LikeButtonWithAnimationState" o-- "flutter::src::animation::animation_controller.dart::AnimationController"
+"chat_app::widgets::like_button.dart::_LikeButtonWithAnimationState" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"flutter::src::widgets::framework.dart::State" <|-- "chat_app::widgets::like_button.dart::_LikeButtonWithAnimationState"
+"flutter::src::widgets::ticker_provider.dart::TickerProviderStateMixin" <|-- "chat_app::widgets::like_button.dart::_LikeButtonWithAnimationState"
+
+class "chat_app::widgets::like_button.dart::AnimatedHeart" {
+  +Animation<double> animation
+  +Offset startPosition
+  +void Function() onComplete
+  +Widget build()
+}
+
+"chat_app::widgets::like_button.dart::AnimatedHeart" o-- "flutter::src::animation::animation.dart::Animation<double>"
+"chat_app::widgets::like_button.dart::AnimatedHeart" o-- "dart::ui::Offset"
+"chat_app::widgets::like_button.dart::AnimatedHeart" o-- "dart::ui::void Function()"
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::widgets::like_button.dart::AnimatedHeart"
+
+class "chat_app::widgets::my_moment_manage_gesture_detector.dart::MyMomentManageGestureDetector" {
+  +Widget build()
+}
+
+"flutter::src::widgets::framework.dart::StatelessWidget" <|-- "chat_app::widgets::my_moment_manage_gesture_detector.dart::MyMomentManageGestureDetector"
+
+
+@enduml

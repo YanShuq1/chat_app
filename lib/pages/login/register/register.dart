@@ -66,11 +66,9 @@ class _RegisterPageState extends State<RegisterPage> {
           email: email,
           password: password,
         );
-
         if (response.user != null) {
           final userId = response.user!.id;
           String? avatarUrl;
-
           // 上传头像
           if (_selectedImage != null) {
             final fileName = 'avatar/$email.jpg';
@@ -83,16 +81,14 @@ class _RegisterPageState extends State<RegisterPage> {
                 .from('user_avatar')
                 .getPublicUrl(fileName);
           }
-
           // 插入用户的个人资料
           await Supabase.instance.client.from('profiles').insert({
             'user_id': userId,
             'email': email,
             'avatar_url': avatarUrl ??
-                'https://cjvsombxqljpbexdpuvy.supabase.co/storage/v1/object/public/user_avatar/default_avatar/default_avatar.jpeg', //默认头像
+                "https://cjvsombxqljpbexdpuvy.supabase.co/storage/v1/object/public/user_avatar/default_avatar/default_avatar.jpeg", //默认头像
             'user_name': userName.isEmpty ? "Unnamed User" : userName,
           });
-
           await Supabase.instance.client.from('contacts').upsert({
             'user_email': email,
             'contacts_email': [],
